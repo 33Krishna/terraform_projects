@@ -9,3 +9,15 @@ variable "bucket_prefix" {
   type        = string
   default     = "my-static-website-"
 }
+
+variable "environment" {
+  description = "Environment name"
+  type        = string
+  default     = "dev"
+}
+
+variable "domain_name" {
+  description = "Custom Domain Name"
+  type        = string
+  default     = "example.com"
+}

@@ -12,3 +12,8 @@ output "aws_s3_bucket_name" {
   description = "The Name of the S3 bucket"
   value       = aws_s3_bucket.website_bucket.bucket
 }
+
+output "route53_nameservers" {
+  description = "Nameservers for the domain (update in GoDaddy)"
+  value       = join("\n", aws_route53_zone.main.name_servers)
+}

@@ -4,7 +4,7 @@ resource "aws_s3_bucket" "website_bucket" {
 
   tags = {
     Name        = "${var.bucket_prefix}-${random_id.r_id.hex}"
-    Environment = "dev"
+    Environment = var.environment
     Owner       = "krishna"
   }
 }
@@ -107,6 +107,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   default_root_object = "index.html"
 
   default_cache_behavior {
+    response_headers_policy_id = aws_cloudfront_response_headers_policy.security_headers.id
     allowed_methods  = ["GET", "HEAD"]
     cached_methods   = ["GET", "HEAD"]
     target_origin_id = "S3-${aws_s3_bucket.website_bucket.id}"
@@ -132,7 +133,87 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     }
   }
 
+  # Without Custom Domain
+  # viewer_certificate {
+  #   cloudfront_default_certificate = true
+  # }
+
+  # With Custom Domain [ Here cloudfront bolta hai ki certificate use karo HTTPS ke liye like SSL Attach karke ]
   viewer_certificate {
-    cloudfront_default_certificate = true
+    acm_certificate_arn      = aws_acm_certificate_validation.cert_validation.certificate_arn
+    ssl_support_method       = "sni-only"
+    minimum_protocol_version = "TLSv1.2_2021"
+  }
+
+  custom_error_response {
+    error_code            = 404
+    response_code         = 200
+    response_page_path    = "/error.html"
+    error_caching_min_ttl = 300
+  }
+}
+
+# ACM Certificate (Here we create our certificate)
+resource "aws_acm_certificate" "cert" {
+  domain_name = var.domain_name
+  validation_method = "DNS"
+
+  # Certificate ko destroy hone se pehle new certificate create karo for Zero Downtime
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+# Route53 ( Custom Domain ) [ Mere domain ka DNS manage karo mtlb hosted zone create karo ]
+resource "aws_route53_zone" "main" {
+  name = var.domain_name
+}
+
+# Route53 Record for ACM Certificate Validation [ Idhar ACM Bolta hai prove karo domain tera hai ]
+resource "aws_route53_record" "cert_validation" {
+  for_each = {
+    for dvo in aws_acm_certificate.cert.domain_validation_options :
+    dvo.domain_name => dvo
+  }
+
+  zone_id = aws_route53_zone.main.zone_id
+  name    = each.value.resource_record_name
+  type    = each.value.resource_record_type
+  records = [each.value.resource_record_value]
+  ttl     = 60
+}
+
+# ACM Certificate Validation [ Dns record ko validate karo and certificate ko active karo ]
+resource "aws_acm_certificate_validation" "cert_validation" {
+  certificate_arn         = aws_acm_certificate.cert.arn
+  validation_record_fqdns = [for record in aws_route53_record.cert_validation : record.fqdn]
+}
+
+# CloudFront Response Headers Policy [ Security Headers, Browser ko instructions dena ki website ko safe kaise handle kare ] 
+resource "aws_cloudfront_response_headers_policy" "security_headers" {
+  name = "security-headers"
+
+  security_headers_config {
+    # protect from fake file execution [Sirf jo type diya hai wahi use kar]
+    content_type_options { override = true }
+
+    # protect from clickjacking attack [frame ko block kar, Kisi bhi iframe me load mat ho]
+    frame_options {
+      frame_option = "DENY"
+      override     = true
+    }
+
+    # protect from leaking sensitive data to other sites [Referrer ko hide kar, data leak nhi hoga]
+    referrer_policy {
+      referrer_policy = "no-referrer"
+      override        = true
+    }
+
+    # protect from XSS attack [Cross-Site Scripting ko block kar, Agar suspicious script hai → block karo]
+    xss_protection {
+      protection = true
+      mode_block = true
+      override   = true
+    }
   }
 }
