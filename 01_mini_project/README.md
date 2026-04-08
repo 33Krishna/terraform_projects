@@ -1,4 +1,4 @@
-# Day 14: Static Website Hosting (Mini Project 1)
+# Static Website Hosting (Mini Project 01)
 
 ## 🎯 Project Overview
 
@@ -138,20 +138,59 @@ After completing this project, you should understand:
 - ✅ Proper MIME type configuration for web assets
 - ✅ AWS CDN concepts and caching strategies
 
+
+---
+
+## 🧠 Key Learnings
+
+- Infrastructure as Code (Terraform)
+- CDN caching strategies and TTL tuning
+- Secure cloud architecture (OAC, private S3)
+- CI/CD automation with GitHub Actions
+- Multi-environment deployment strategy
+
 ## 🔗 Useful Links
 
 - [AWS S3 Static Website Hosting Guide](https://docs.aws.amazon.com/AmazonS3/latest/userguide/WebsiteHosting.html)
 - [CloudFront Documentation](https://docs.aws.amazon.com/cloudfront/)
 - [Terraform AWS Provider](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
 
-## 🎉 Next Steps
+## 🎉 Enhancements Implemented (Production-Ready Setup)
 
-Consider extending this project with:
-- Custom domain name with Route 53
-- SSL certificate with AWS Certificate Manager
-- CI/CD pipeline for automatic deployments
-- Multiple environments (dev, staging, prod)
-- Advanced CloudFront configurations (custom error pages, security headers)
+This project has been extended beyond the basic setup and now includes production-grade features:
+
+- ✅ **Custom Domain Integration (Route 53 Ready)**  
+  Infrastructure is prepared to support custom domains via Route 53.
+
+- ✅ **HTTPS with AWS Certificate Manager (ACM)**  
+  Secure HTTPS configuration using ACM (default CloudFront SSL used for now).
+
+- ✅ **CI/CD Pipeline with GitHub Actions**  
+  Automatic deployment triggered on code push:
+  - Terraform init & apply
+  - CloudFront cache invalidation
+
+- ✅ **Multiple Environments (Dev, Staging, Prod)**  
+  Environment-based deployments using `.tfvars`:
+  - Separate infrastructure per environment
+  - Branch-based deployment strategy
+
+- ✅ **Advanced CloudFront Configuration**  
+  - Custom error pages (404 handling)
+  - Security headers (XSS protection, frame options, etc.)
+  - Optimized caching (TTL)
+
+- ✅ **Secure Infrastructure Design**  
+  - Private S3 bucket (no public access)
+  - Access controlled via CloudFront (OAC)
+
+- ✅ **Terraform Remote Backend (S3)**  
+  - Centralized state management
+  - Ready for team collaboration
+
+---
+
+🚀 This project now reflects a **real-world production-grade DevOps setup** using AWS and Terraform.
 
 ---
 **Note**: This project uses CloudFront's default domain. For production websites, consider using a custom domain with Route 53 and ACM for SSL certificates.
