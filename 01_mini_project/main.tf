@@ -1,9 +1,9 @@
 # S3 Bucket for Static Website
 resource "aws_s3_bucket" "website_bucket" {
-  bucket = "${var.bucket_prefix}-${random_id.r_id.hex}"
+  bucket = "${var.bucket_prefix}-${var.environment}-${random_id.r_id.hex}"
 
   tags = {
-    Name        = "${var.bucket_prefix}-${random_id.r_id.hex}"
+    Name        = "${var.bucket_prefix}-${var.environment}-${random_id.r_id.hex}"
     Environment = var.environment
     Owner       = "krishna"
   }

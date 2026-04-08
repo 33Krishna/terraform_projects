@@ -1,8 +1,10 @@
-name: Terraform Deploy
+name: Deploy Terraform
 
 on:
   push:
     branches:
+      - dev
+      - staging
       - main
 
 jobs:
@@ -10,15 +12,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Code checkout
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Setup Terraform
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
-      # Step 3: Configure AWS credentials
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
@@ -26,15 +25,24 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      # Step 4: Terraform Init
+      # Decide environment dynamically
+      - name: Set Environment
+        id: env
+        run: |
+          if [[ "${GITHUB_REF}" == "refs/heads/dev" ]]; then
+            echo "env=dev" >> $GITHUB_OUTPUT
+          elif [[ "${GITHUB_REF}" == "refs/heads/staging" ]]; then
+            echo "env=staging" >> $GITHUB_OUTPUT
+          else
+            echo "env=prod" >> $GITHUB_OUTPUT
+          fi
+
       - name: Terraform Init
         run: terraform init
 
-      # Step 5: Terraform Apply
       - name: Terraform Apply
-        run: terraform apply -auto-approve
+        run: terraform apply -auto-approve -var-file=env/${{ steps.env.outputs.env }}.tfvars
 
-      # Step 6: Invalidate CloudFront Cache
       - name: Invalidate Cache
         run: |
           aws cloudfront create-invalidation \

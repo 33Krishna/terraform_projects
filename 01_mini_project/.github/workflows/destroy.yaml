@@ -30,4 +30,4 @@ jobs:
 
       # Step 5: Destroy
       - name: Terraform Destroy
-        run: terraform destroy -auto-approve
+        run: terraform destroy -auto-approve -var-file=env/dev.tfvars
