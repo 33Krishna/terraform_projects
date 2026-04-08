@@ -32,15 +32,24 @@ Internet → CloudFront Distribution → S3 Bucket (Static Website)
 ## 📁 Project Structure
 
 ```
-day14/
-├── main.tf              # Main Terraform configuration
-├── variables.tf         # Input variables
-├── outputs.tf          # Output values
-├── README.md           # This file
-└── www/                # Website source files
-    ├── index.html      # Main HTML page
-    ├── style.css       # Stylesheet
-    └── script.js       # JavaScript functionality
+project/
+├── main.tf           # Main Terraform configuration
+├── variables.tf      # Input variables
+├── outputs.tf        # Output values
+├── provider.tf       # Provider configuration
+├── backend.tf        # Backend configuration
+├── env/              # Environment-specific variables
+│   ├── dev.tfvars    # Development environment variables
+│   ├── staging.tfvars# Staging environment variables
+│   └── prod.tfvars   # Production environment variables
+├── www/                # Website source files
+│   ├── index.html      # Main HTML page
+│   ├── style.css       # Stylesheet
+│   └── script.js       # JavaScript functionality
+└── .github/workflows/  # CI/CD pipeline configurations
+    ├── deploy.yml      # CI/CD pipeline for automatic deployments
+    └── destroy.yml     # CI/CD pipeline for automatic destruction
+
 ```
 
 ## 🚀 Features
@@ -100,6 +109,7 @@ website_url = "https://d3ownwzlqfpss.cloudfront.net"
 | S3 Bucket Policy | Public read access | 1 |
 | S3 Objects | Website files (HTML, CSS, JS) | 3 |
 | CloudFront Distribution | Global CDN | 1 |
+| and More | and More | and More |
 
 ## 🔧 Configuration Details
 
