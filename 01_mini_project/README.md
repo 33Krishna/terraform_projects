@@ -347,8 +347,6 @@ This makes the system highly scalable and cost-efficient.
 
 ## 👌 Advanced Theory Based Questions
 
----
-
 ### 🔹 Q1: Why did you choose Terraform over CloudFormation?
 
 I chose Terraform because it is cloud-agnostic and supports multiple providers, not just AWS. It also has a more concise and readable syntax, and the community support and ecosystem are stronger.
@@ -494,8 +492,6 @@ I would use Terraform's multi-provider support to manage resources across differ
 
 
 ## 🔥 Real-world thinking + pressure handling Questions 
-
----
 
 ### 🔹 Q1: Real Production Issue -- User bol raha: "Maine website update ki, but old version hi dikh raha hai"
 
