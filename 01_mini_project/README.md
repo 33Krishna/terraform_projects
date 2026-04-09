@@ -345,7 +345,7 @@ Yes, the system is scalable.
 
 This makes the system highly scalable and cost-efficient.
 
-### Advanced Theory Based Questions 👌
+## 👌 Advanced Theory Based Questions
 
 ---
 
@@ -493,7 +493,7 @@ I would use Terraform to manage both AWS and on-premises resources. Terraform's 
 I would use Terraform's multi-provider support to manage resources across different cloud providers (AWS, Azure, GCP). This would allow for workload portability and avoid vendor lock-in.
 
 
-### Real-world thinking + pressure handling Questions 🔥
+## 🔥 Real-world thinking + pressure handling Questions 
 
 ---
 
