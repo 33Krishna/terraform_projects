@@ -204,3 +204,143 @@ This project has been extended beyond the basic setup and now includes productio
 
 ---
 **Note**: This project uses CloudFront's default domain. For production websites, consider using a custom domain with Route 53 and ACM for SSL certificates.
+
+## 🎤 Interview Questions & Answers Related to this project
+
+### 🔹 Q1: Can you explain your project?
+
+I built a production-ready static website hosting system using AWS and Terraform.
+
+The website is hosted on an S3 bucket, which is kept private for security. CloudFront is used as a CDN to deliver content globally with low latency.
+
+I used Terraform to automate the entire infrastructure, making it reproducible and version-controlled.
+
+Additionally, I implemented a CI/CD pipeline using GitHub Actions, which automatically deploys changes whenever code is pushed.
+
+---
+
+### 🔹 Q2: Explain the architecture
+
+The architecture follows this flow:
+
+User → CloudFront → S3
+
+CloudFront serves content from edge locations. If content is cached, it returns immediately; otherwise, it fetches from S3.
+
+The S3 bucket is private and only accessible via CloudFront using Origin Access Control (OAC).
+
+---
+
+### 🔹 Q3: Why did you use for_each?
+
+I used `for_each` to dynamically create multiple resources based on a collection.
+
+In my project, it is used to upload multiple files from the `www` folder to S3 automatically, avoiding manual configuration.
+
+Compared to `count`, `for_each` is more flexible and stable when working with maps and sets.
+
+---
+
+### 🔹 Q4: Why use S3 backend for Terraform?
+
+I used an S3 backend to store Terraform state remotely.
+
+This helps prevent state loss, enables team collaboration, and ensures consistency between local and CI/CD environments.
+
+It can also be extended with DynamoDB for state locking.
+
+---
+
+### 🔹 Q5: What does lifecycle create_before_destroy do?
+
+It ensures that a new resource is created before the old one is destroyed.
+
+This avoids downtime during updates and helps maintain service availability.
+
+---
+
+### 🔹 Q6: What is CloudFront?
+
+CloudFront is a CDN that improves performance by caching content at edge locations.
+
+It reduces latency, improves load times, and minimizes direct requests to the origin server.
+
+---
+
+### 🔹 Q7: Why keep S3 private?
+
+The S3 bucket is kept private to prevent direct public access.
+
+Access is controlled via CloudFront using OAC, which improves security and ensures all requests pass through the CDN layer.
+
+---
+
+### 🔹 Q8: Why do we use cache invalidation?
+
+Cache invalidation removes outdated content from CloudFront.
+
+Since CloudFront caches data, users might see old content. Invalidating ensures fresh content is served.
+
+---
+
+### 🔹 Q9: Explain your CI/CD pipeline
+
+The CI/CD pipeline is implemented using GitHub Actions.
+
+Flow:
+- Code is pushed to GitHub
+- GitHub Actions triggers Terraform
+- Infrastructure is updated automatically
+- CloudFront cache is invalidated
+
+---
+
+### 🔹 Q10: Why use GitHub Secrets?
+
+GitHub Secrets securely store sensitive credentials like AWS keys.
+
+This prevents exposing secrets in code and ensures secure CI/CD operations.
+
+---
+
+### 🔹 Q11: Website not updating after deployment – what will you do?
+
+This is likely due to CloudFront caching.
+
+Solution:
+- Perform cache invalidation
+- Verify S3 object updates
+- Check TTL settings
+
+---
+
+### 🔹 Q12: How do you debug CI/CD failures?
+
+- Check GitHub Actions logs
+- Verify AWS credentials
+- Run Terraform plan locally
+- Identify failing step and fix errors
+
+---
+
+### 🔹 Q13: Why multi-environment setup?
+
+Multi-environment setup ensures safe deployments.
+
+- Dev → testing
+- Staging → pre-production validation
+- Prod → live environment
+
+It reduces risk and improves reliability.
+
+---
+
+### 🔹 Q14: Can your system handle high traffic?
+
+Yes, the system is scalable.
+
+- CloudFront handles global traffic via edge locations
+- S3 scales automatically
+- Caching reduces load on origin
+
+This makes the system highly scalable and cost-efficient.
