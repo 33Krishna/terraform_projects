@@ -344,3 +344,253 @@ Yes, the system is scalable.
 - Caching reduces load on origin
 
 This makes the system highly scalable and cost-efficient.
+
+### Advanced Theory Based Questions 👌
+
+---
+
+### 🔹 Q1: Why did you choose Terraform over CloudFormation?
+
+I chose Terraform because it is cloud-agnostic and supports multiple providers, not just AWS. It also has a more concise and readable syntax, and the community support and ecosystem are stronger.
+
+---
+
+### 🔹 Q2: What would you do if the website was down during peak traffic?
+
+First, I would check the CloudFront cache status. If the cache was stale, I would perform an immediate cache invalidation. If the issue persisted, I would check the S3 bucket health and CloudFront distribution logs. If necessary, I would scale up the resources or switch to a backup deployment.
+
+---
+
+### 🔹 Q3: How would you secure this website further?
+
+I would implement additional security measures such as:
+- WAF (Web Application Firewall) to protect against common web exploits
+- DDoS protection through AWS Shield
+- Geo-restrictions to limit access to specific regions
+- Strict CORS policies
+- Regular security audits and vulnerability scanning
+
+---
+
+### 🔹 Q4: How would you handle multiple environments in production?
+
+I would use Terraform workspaces or separate state files for each environment (dev, staging, prod). Each environment would have its own configuration, variables, and potentially separate AWS accounts for better isolation.
+
+---
+
+### 🔹 Q5: What if you needed to add a backend API to this website?
+
+I would create a separate backend service (e.g., on ECS or Lambda) and expose it via API Gateway. CloudFront would then route requests to either the static website or the API based on the URL path.
+
+---
+
+### 🔹 Q6: How would you monitor the website's performance?
+
+I would use CloudWatch for monitoring:
+- CloudFront metrics (cache hit ratio, error rates, latency)
+- S3 metrics (request counts, error rates)
+- Custom metrics for application-specific data
+- Alarms to notify on issues
+- Dashboards for visualization
+
+---
+
+### 🔹 Q7: What if the website needed to support multiple languages?
+
+I would use a multi-region S3 setup with CloudFront geo-routing or a more sophisticated CDN configuration to serve content based on user location. Alternatively, I could use a headless CMS with a multi-language setup.
+
+---
+
+### 🔹 Q8: How would you handle database migrations in a production environment?
+
+I would use a blue-green deployment strategy for database migrations. The new database would be created alongside the old one, data would be migrated, and then traffic would be switched over. Terraform could be used to automate this process.
+
+---
+
+### 🔹 Q9: What if you needed to implement A/B testing?
+
+I would use CloudFront weighted distributions to route traffic to different versions of the website. Terraform could be used to manage the weights and configurations for A/B testing scenarios.
+
+---
+
+### 🔹 Q10: How would you handle secrets management in production?
+
+I would use AWS Secrets Manager or HashiCorp Vault to securely store and manage secrets. Terraform would integrate with these services to retrieve secrets at runtime, avoiding hardcoded credentials.
+
+---
+
+### 🔹 Q11: What if you needed to implement blue-green deployment for the website?
+
+I would create two identical S3 buckets and CloudFront distributions. Traffic would be gradually shifted from the old to the new environment. Terraform could manage the deployment and traffic shifting process.
+
+---
+
+### 🔹 Q12: How would you handle rollback in case of deployment failure?
+
+I would use Terraform's state management to roll back to the previous working configuration. For critical production systems, I would implement automated rollback triggers based on health checks and monitoring metrics.
+
+---
+
+### 🔹 Q13: What if you needed to implement canary releases?
+
+I would use CloudFront weighted distributions to gradually roll out the new version to a small percentage of users. Terraform could manage the weights and monitor the canary release progress.
+
+---
+
+### 🔹 Q14: How would you handle infrastructure cost optimization?
+
+I would implement cost optimization strategies such as:
+- Using reserved instances for predictable workloads
+- Optimizing S3 storage classes
+- Implementing proper caching to reduce data transfer costs
+- Using auto-scaling to match resources to demand
+- Monitoring costs and setting budgets
+
+---
+
+### 🔹 Q15: What if you needed to implement multi-region deployment for high availability?
+
+I would deploy the same infrastructure in multiple AWS regions and use CloudFront geo-routing to direct users to the nearest region. Terraform would manage the multi-region deployment and failover configurations.
+
+---
+
+### 🔹 Q16: How would you handle security incident response?
+
+I would implement a security incident response plan that includes:
+- Monitoring and alerting for suspicious activity
+- Automated response actions (e.g., blocking IPs)
+- Forensic analysis and evidence collection
+- Post-incident review and improvement
+- Communication protocols
+
+---
+
+### 🔹 Q17: What if you needed to implement infrastructure as code for multiple teams?
+
+I would use Terraform modules to create reusable infrastructure components. Each team would have its own workspace and variables, and I would implement proper access control and code review processes.
+
+---
+
+### 🔹 Q18: How would you handle disaster recovery?
+
+I would implement a disaster recovery plan that includes:
+- Regular backups of critical data
+- Multi-region deployment for high availability
+- Automated failover procedures
+- Recovery time objectives (RTO) and recovery point objectives (RPO)
+- Regular DR testing
+
+---
+
+### 🔹 Q19: What if you needed to implement infrastructure as code for hybrid cloud?
+
+I would use Terraform to manage both AWS and on-premises resources. Terraform's provider ecosystem supports hybrid cloud scenarios, allowing for unified infrastructure management across different environments.
+
+---
+
+### 🔹 Q20: How would you handle infrastructure as code for multi-cloud?
+
+I would use Terraform's multi-provider support to manage resources across different cloud providers (AWS, Azure, GCP). This would allow for workload portability and avoid vendor lock-in.
+
+
+### Real-world thinking + pressure handling Questions 🔥
+
+---
+
+### 🔹 Q1: Real Production Issue -- User bol raha: "Maine website update ki, but old version hi dikh raha hai"
+
+### 👉 Explain:
+### Problem kya ho sakta hai?
+### Step-by-step fix kya karega?
+
+The issue is most likely due to CloudFront caching.
+Since CloudFront caches content, users may still see the old version even after updates.
+To fix this:
+1. I would perform a CloudFront cache invalidation.
+2. Verify that the updated files are correctly uploaded to S3.
+3. Check TTL settings to ensure caching is not too long.
+4. Optionally, I can version files to avoid caching issues in the future.
+
+---
+
+### 🔹 Q2: Debugging Skill -- CI/CD pipeline fail ho gaya at Terraform Apply step
+
+### 👉 Tu kya karega?
+### Kaise debug karega?
+### Kaunsa step check karega?
+
+First, I would check the GitHub Actions logs to identify the exact error.
+Then, I would verify AWS credentials and permissions.
+If the issue is unclear, I would run terraform plan or apply locally to reproduce the error.
+Finally, I would identify the failing resource and fix the configuration accordingly.
+
+---
+
+### 🔹 Q3: Performance Issue -- India ke users bol rahe site slow hai
+
+### 👉 Jabki tu CloudFront use kar raha hai
+### 👉 Possible reasons + fixes bata
+
+Even with CloudFront, performance issues can happen due to:
+1. Incorrect price class configuration, which may not include edge locations near India.
+2. Cache miss, causing frequent requests to the origin (S3).
+3. Large file sizes or unoptimized assets.
+4. High TTL misconfiguration or no caching strategy.
+To fix this:
+- Use PriceClass_All for better global coverage.
+- Optimize caching with proper TTL.
+- Compress assets (gzip/brotli).
+- Ensure content is cached properly at edge locations.
+
+---
+
+### 🔹 Q4: Terraform Conflict -- 2 developers same time terraform apply karte hain
+
+### 👉 Problem kya hoga?
+### 👉 Tu kaise solve karega?
+
+If two developers run terraform apply at the same time, it can cause state conflicts.
+
+This happens because both are trying to modify the same Terraform state.
+To solve this:
+- Use a remote backend like S3.
+- Enable state locking using DynamoDB.
+This ensures only one operation can modify the state at a time, preventing conflicts.
+
+---
+
+### 🔹 Q5: Security Scenario -- Agar kisi ne S3 bucket public kar diya accidentally
+
+### 👉 Tu kaise detect karega?
+### 👉 Kaise fix karega?
+
+I can detect this issue using AWS tools like:
+
+- AWS Config to monitor bucket policies
+- CloudTrail logs for changes
+- Security alerts
+
+To fix this:
+- Enable S3 Block Public Access settings
+- Update bucket policy to allow access only via CloudFront (OAC)
+- Enforce security through Terraform to avoid manual misconfiguration
+
+---
+
+### 🔹 Q6: Scaling -- Agar traffic 100 se 1 lakh users ho jaye
+
+### 👉 Kya tera system handle karega?
+### 👉 Kaise?
+
+Yes, the system can handle high traffic because:
+
+1. CloudFront distributes traffic globally using edge locations.
+2. S3 automatically scales to handle large numbers of requests.
+3. Caching reduces load on the origin, improving performance.
+
+Additionally, we can optimize further by:
+- Using proper caching strategies
+- Compressing assets
+- Monitoring with CloudWatch
+
+---
