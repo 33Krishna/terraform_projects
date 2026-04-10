@@ -6,3 +6,7 @@ crash.log
 .env
 .terraform.lock.hcl
 .terraform
+*.pem
+*.ppk
+*.pem.pub
+*.ppk.pub
