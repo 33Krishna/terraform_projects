@@ -291,7 +291,7 @@ resource "aws_instance" "secondary_instance" {
 
   user_data = local.secondary_user_data
 
-  depends_on = [aws_vpc_peering_connection_accepter.secondary_accepter]
+  depends_on = [aws_vpc_peering_connection_accepter.secondary_accepter] # this line is optional ( Overuse Line )
 
   tags = {
     Name        = "Secondary-VPC-Instance"
