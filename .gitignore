@@ -8,5 +8,3 @@ crash.log
 .terraform
 *.pem
 *.ppk
-*.pem.pub
-*.ppk.pub
