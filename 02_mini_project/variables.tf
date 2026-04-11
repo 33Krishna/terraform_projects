@@ -58,3 +58,9 @@ variable "secondary_key_name" {
   type        = string
   default     = ""
 }
+
+variable "my_ip" {
+  description = "Your IP for SSH"
+  type        = string
+  default     = "0.0.0.0/0" # TODO: Change this to your own IP address
+}

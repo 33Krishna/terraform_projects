@@ -12,3 +12,5 @@ instance_type = "t3.micro"
 
 primary_key_name   = "primary-vpc-peering"
 secondary_key_name = "secondary-vpc-peering"
+
+my_ip = "0.0.0.0/0" # "49.42.179.76/32"

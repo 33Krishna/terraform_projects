@@ -7,12 +7,21 @@ terraform {
   }
 }
 
+# provider "aws" {
+#   region = var.primary_region
+#   alias = "primary"
+# }
+
+# provider "aws" {
+#   region = var.secondary_region
+#   alias = "secondary"
+# }
+
 provider "aws" {
   region = var.primary_region
-  alias = "primary"
 }
 
 provider "aws" {
+  alias  = "secondary"
   region = var.secondary_region
-  alias = "secondary"
 }

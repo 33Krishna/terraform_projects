@@ -1,6 +1,5 @@
 # Data source to get available AZs in Primary region
 data "aws_availability_zones" "primary" {
-  provider = aws.primary
   state = "available"
 }
 
@@ -12,7 +11,6 @@ data "aws_availability_zones" "secondary" {
 
 # Data source for Primary region AMI ( ubuntu 24.04 LTS )
 data "aws_ami" "primary_ami" {
-  provider = aws.primary
   most_recent = true
   owners = [ "099720109477" ] # Canonical (Ubuntu)
   
