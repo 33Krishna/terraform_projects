@@ -274,3 +274,80 @@ resource "aws_instance" "secondary_instance" {
     Region = var.secondary_region
   })
 }
+
+# NEXT STEPS
+# 1. Add more subnets (private subnet)
+# 2. Implement NAT gateway
+
+# Primary Private Subnet
+resource "aws_subnet" "primary_private_subnet" {
+  vpc_id = aws_vpc.primary_vpc.id
+  cidr_block = "10.0.2.0/24"
+  availability_zone = data.aws_availability_zones.primary.names[0]
+
+  tags = merge(local.common_tags, {
+    Name = "Primary-Private-Subnet"
+  })
+}
+
+# Elastic IP for NAT Gateway
+resource "aws_eip" "nat_eip" {
+  domain = "vpc"
+
+  tags = merge(local.common_tags, {
+    Name = "NAT-EIP"
+  })
+}
+
+# NAT Gateway
+resource "aws_nat_gateway" "primary_nat" {
+  allocation_id = aws_eip.nat_eip.id
+  subnet_id = aws_subnet.primary_subnet.id # Need to give public subnet
+
+  depends_on = [aws_internet_gateway.primary_igw]
+
+  tags = merge(local.common_tags, {
+    Name = "Primary-NAT-Gateway"
+  })
+}
+
+# Private Route Table
+resource "aws_route_table" "primary_private_rt" {
+  vpc_id = aws_vpc.primary_vpc.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.primary_nat.id
+  }
+
+  tags = merge(local.common_tags, {
+    Name = "Primary-Private-RT"
+  })
+}
+
+# Associate Private Route Table with Private Subnet
+resource "aws_route_table_association" "primary_private_rta" {
+  subnet_id      = aws_subnet.primary_private_subnet.id
+  route_table_id = aws_route_table.primary_private_rt.id
+}
+
+# EC2 Instance in Private Subnet
+resource "aws_instance" "primary_private_instance" {
+  ami                    = data.aws_ami.primary_ami.id
+  instance_type          = var.instance_type
+  subnet_id              = aws_subnet.primary_private_subnet.id
+  vpc_security_group_ids = [aws_security_group.primary_sg.id]
+  key_name               = var.primary_key_name
+
+  user_data = local.primary_user_data
+
+  tags = merge(local.common_tags, {
+    Name   = "Primary-Private-Instance"
+    Region = var.primary_region
+  })
+}
+
+
+# NEXT STEP
+# 3. Add VPC Flow Logs for traffic analysis
+
