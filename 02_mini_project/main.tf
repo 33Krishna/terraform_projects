@@ -351,3 +351,86 @@ resource "aws_instance" "primary_private_instance" {
 # NEXT STEP
 # 3. Add VPC Flow Logs for traffic analysis
 
+# IAM Role
+resource "aws_iam_role" "vpc_flow_logs_role" {
+  name = "vpc-flow-logs-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = "sts:AssumeRole",
+        Principal = {
+          Service = "vpc-flow-logs.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+# Attach Policy to IAM Role
+resource "aws_iam_role_policy" "vpc_flow_logs_policy" {
+  name = "vpc-flow-logs-policy"
+  role = aws_iam_role.vpc_flow_logs_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = "logs:CreateLogGroup",
+        Resource = "*"
+      },
+      {
+        Effect = "Allow",
+        Action = "logs:CreateLogStream",
+        Resource = "*"
+      },
+      {
+        Effect = "Allow",
+        Action = "logs:PutLogEvents",
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+# CloudWatch Log Group
+resource "aws_cloudwatch_log_group" "vpc_flow_logs" {
+  name = "/aws/vpc/flow-logs"
+
+  retention_in_days = 7
+}
+
+# Enable Primary VPC Flow Logs
+resource "aws_flow_log" "primary_vpc_flow_logs" {
+  log_destination = aws_cloudwatch_log_group.vpc_flow_logs.arn
+  log_destination_type = "cloud-watch-logs"
+
+  traffic_type = "ALL"
+  vpc_id = aws_vpc.primary_vpc.id
+
+  iam_role_arn = aws_iam_role.vpc_flow_logs_role.arn
+
+  tags = merge(local.common_tags, {
+    Name = "Primary-VPC-Flow-Logs"
+  })
+}
+
+# Enable Secondary VPC Flow Logs (Optional)
+resource "aws_flow_log" "secondary_vpc_flow_logs" {
+  provider = aws.secondary
+
+  log_destination = aws_cloudwatch_log_group.vpc_flow_logs.arn
+  log_destination_type = "cloud-watch-logs"
+
+  traffic_type = "ALL"
+  vpc_id = aws_vpc.secondary_vpc.id
+
+  iam_role_arn = aws_iam_role.vpc_flow_logs_role.arn
+
+  tags = merge(local.common_tags, {
+    Name = "Secondary-VPC-Flow-Logs"
+  })
+}
