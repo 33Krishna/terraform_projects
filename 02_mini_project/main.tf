@@ -376,23 +376,15 @@ resource "aws_iam_role_policy" "vpc_flow_logs_policy" {
 
   policy = jsonencode({
     Version = "2012-10-17",
-    Statement = [
-      {
-        Effect = "Allow",
-        Action = "logs:CreateLogGroup",
-        Resource = "*"
-      },
-      {
-        Effect = "Allow",
-        Action = "logs:CreateLogStream",
-        Resource = "*"
-      },
-      {
-        Effect = "Allow",
-        Action = "logs:PutLogEvents",
-        Resource = "*"
-      }
-    ]
+    Statement = [{
+      Effect = "Allow",
+      Action = [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+      ],
+      Resource = "*"
+    }]
   })
 }
 
@@ -433,4 +425,54 @@ resource "aws_flow_log" "secondary_vpc_flow_logs" {
   tags = merge(local.common_tags, {
     Name = "Secondary-VPC-Flow-Logs"
   })
+}
+
+# NEXT STEP
+# 6. Implement Transit Gateway for complex topologies
+
+# Creating Transit Gateway
+resource "aws_ec2_transit_gateway" "tgw" {
+  description = "Main Transit Gateway"
+
+  tags = merge(local.common_tags, {
+    Name = "Main-TGW"
+  })
+}
+
+# Transit Gateway Attachment for Primary VPC
+resource "aws_ec2_transit_gateway_vpc_attachment" "primary_attachment" {
+  subnet_ids = [aws_subnet.primary_subnet.id]
+  transit_gateway_id = aws_ec2_transit_gateway.tgw.id
+  vpc_id = aws_vpc.primary_vpc.id
+
+  tags = merge(local.common_tags, {
+    Name = "Primary-TGW-Attachment"
+  })
+}
+
+# Transit Gateway Attachment for Secondary VPC
+resource "aws_ec2_transit_gateway_vpc_attachment" "secondary_attachment" {
+  provider = aws.secondary
+  subnet_ids = [aws_subnet.secondary_subnet.id]
+  transit_gateway_id = aws_ec2_transit_gateway.tgw.id
+  vpc_id = aws_vpc.secondary_vpc.id
+
+  tags = merge(local.common_tags, {
+    Name = "Secondary-TGW-Attachment"
+  })
+}
+
+# Transit Gateway Routing for Primary VPC 
+resource "aws_route" "primary_to_secondary_tgw" {
+  route_table_id = aws_route_table.primary_rt.id
+  destination_cidr_block = var.secondary_vpc_cidr
+  transit_gateway_id = aws_ec2_transit_gateway.tgw.id
+}
+
+# Transit Gateway Routing for Secondary VPC 
+resource "aws_route" "secondary_to_primary_tgw" {
+  provider = aws.secondary
+  route_table_id = aws_route_table.secondary_rt.id
+  destination_cidr_block = var.primary_vpc_cidr
+  transit_gateway_id = aws_ec2_transit_gateway.tgw.id
 }
