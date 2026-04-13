@@ -476,3 +476,59 @@ resource "aws_route" "secondary_to_primary_tgw" {
   destination_cidr_block = var.primary_vpc_cidr
   transit_gateway_id = aws_ec2_transit_gateway.tgw.id
 }
+
+# NEXT STEP
+# 5. Set up a VPN connection
+
+# Create Customer Gateway (Your Side means Office Side router)
+resource "aws_customer_gateway" "cg" {
+  bgp_asn = 65000
+  ip_address = var.my_ip # This should be On-premise router / firewall ka PUBLIC STATIC IP
+  type = "ipsec.1"
+
+  tags = merge(local.common_tags, {
+    Name = "Customer-Gateway"
+  })
+}
+
+# Create Virtual Private Gateway (AWS Side entry)
+resource "aws_vpn_gateway" "vgw" {
+  vpc_id = aws_vpc.primary_vpc.id
+
+  tags = merge(local.common_tags, {
+    Name = "Virtual-Private-Gateway"
+  })
+}
+
+# Create VPN Connection
+resource "aws_vpn_connection" "vpn" {
+  vpn_gateway_id = aws_vpn_gateway.vgw.id
+  customer_gateway_id = aws_customer_gateway.cg.id
+  type = "ipsec.1"
+
+  static_routes_only = true
+
+  tags = merge(local.common_tags, {
+    Name = "Site-to-Site-VPN-Connection"
+  })
+}
+
+# Create VPN Connection Route
+resource "aws_vpn_connection_route" "vpn_route" {
+  vpn_connection_id = aws_vpn_connection.vpn.id
+  destination_cidr_block = var.on_prem_cidr # Your local network ( On-premise/office network ka private IP range )
+}
+
+# Route Table Update for VPN
+resource "aws_route" "primary_to_vpn" {
+  route_table_id = aws_route_table.primary_rt.id
+  destination_cidr_block = var.on_prem_cidr # Your local network ( On-premise/office network ka private IP range )
+  gateway_id = aws_vpn_gateway.vgw.id
+}
+
+# If want to create VPN for secondary or other VPCs then don't use this basic messy method
+# Use Transit Gateway instead (Office → VPN → TGW → All VPCs)
+# VGW is per VPC, but TGW can connect VPN to multiple VPCs
+# This VPN connection is not real connection but its a concept + infra setup
+# For real connection you need to configure on-premise router / firewall
+# In production, VPN is usually attached to a Transit Gateway, not directly to a single VPC

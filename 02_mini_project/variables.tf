@@ -62,5 +62,11 @@ variable "secondary_key_name" {
 variable "my_ip" {
   description = "Your IP for SSH"
   type        = string
-  default     = "0.0.0.0/0" # TODO: Change this to your own IP address
+  default     = "0.0.0.0/0" # Change this to your own IP address
+}
+
+variable "on_prem_cidr" {
+  description = "On-premise network CIDR block"
+  type        = string
+  default     = "192.168.1.0/24"
 }
