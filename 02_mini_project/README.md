@@ -4,6 +4,10 @@
 This project showcases **AWS VPC Peering** by creating two VPCs in different AWS regions and establishing a peering connection between them. This allows resources in both VPCs to communicate with each other using private IP addresses.
 
 ## 🏗️ Architecture
+
+### VPC Peering Architecture
+![VPC Peering Architecture](./images/vpc-peering-architecture.png)
+
 ```
 ┌─────────────────────────────────────┐       ┌─────────────────────────────────────┐
 │     Primary VPC (us-east-1)         │       │    Secondary VPC (us-west-2)        │
@@ -23,11 +27,46 @@ This project showcases **AWS VPC Peering** by creating two VPCs in different AWS
                   └───────────────VPC Peering───────────────────┘
 ```
 
-### VPC Peering Architecture
-
-![VPC Peering Architecture](./images/vpc-peering-architecture.png)
-
 ### Final Production-Level Architecture (Extended)
+
+```
+                    🌍 Internet
+                         │
+                  ┌──────┴──────┐
+                  │   IGW (A)   │
+                  └──────┬──────┘
+                         │
+                ┌────────▼────────┐
+                │  Public Subnet  │
+                │  (Primary VPC)  │
+                │  EC2 (Bastion)  │
+                │  NAT Gateway    │
+                └────────┬────────┘
+                         │
+                ┌────────▼────────┐
+                │ Private Subnet  │
+                │  EC2 (App) 🔐   │
+                └────────┬────────┘
+                         │
+                         ▼
+                  ┌────────────┐
+                  │    TGW     │
+                  └────┬───┬───┘
+                       │   │
+         ┌─────────────┘   └─────────────┐
+         ▼                               ▼
+ Secondary VPC                     Third VPC
+ Public EC2                        Public EC2
+
+                         ▲
+                         │
+                   🔐 VPN Tunnel
+                         │
+               Customer Gateway (Office)
+                         │
+                  🏢 On-Prem Network
+
+```
 
 ![Full Architecture](./images/full-architecture.png)
 
