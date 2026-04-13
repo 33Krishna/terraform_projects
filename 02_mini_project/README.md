@@ -68,7 +68,7 @@ This project showcases **AWS VPC Peering** by creating two VPCs in different AWS
 
 ```
 
-![Full Architecture](./images/full-architecture.png)
+![Full Architecture](./images/full-architecture-2.png)
 
 ---
 
