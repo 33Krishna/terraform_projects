@@ -6,7 +6,7 @@ output "account_id" {
 
 # Output user names
 output "user_names" {
-  value = [for user in local.users : "${user.first_name} ${user.last_name}"]
+  value = [for user in aws_iam_user.users : "${user.name}"]
 }
 
 # Output user passwords

@@ -40,6 +40,6 @@ resource "aws_iam_group_membership" "engineers_members" {
   group = aws_iam_group.engineers.name
 
   users = [
-    for user in aws_iam_user.users : user.name if user.tags.Department == "Engineering" # Note: No users match this in the current CSV
+    for user in aws_iam_user.users : user.name if user.tags.Department == "Engineering"
   ]
 }

@@ -3,7 +3,9 @@ data "aws_caller_identity" "current" {}
 
 # Create IAM users
 resource "aws_iam_user" "users" {
-  for_each = { for user in local.users : user.first_name => user }
+for_each = {
+  for user in local.users : "${user.first_name}-${user.last_name}" => user
+}
 
   name = lower("${substr(each.value.first_name, 0, 1)}${each.value.last_name}")
   path = "/users/"

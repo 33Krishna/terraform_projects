@@ -296,7 +296,7 @@ terraform state show aws_iam_user.users[\"Michael\"]
 2. **Enable MFA** - Require multi-factor authentication
 3. **Set Up AWS SSO** - For better user management in production
 4. **Add More Attributes** - Extend CSV with email, phone, etc.
-5. **Automate Onboarding** - Integrate with HR systems
+5. **Automate Onboarding** - Integrate with HR systems ( Optional )
 
 ## Resources
 
