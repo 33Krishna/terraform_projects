@@ -52,17 +52,17 @@ resource "aws_iam_group_membership" "engineers_members" {
 # Education group role access
 resource "aws_iam_group_policy_attachment" "education_readonly" {
   group = aws_iam_group.education.name
-  policy_arn = "arn:aws:iam::aws:policy/ReadOnlyAccess"
+  policy_arn = aws_iam_policy.require_mfa.arn
 }
 
 # Manager group role access
 resource "aws_iam_group_policy_attachment" "managers_admin" {
   group = aws_iam_group.managers.name
-  policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
+  policy_arn = aws_iam_policy.require_mfa.arn
 }
 
 # Engineer Group Access
 resource "aws_iam_group_policy_attachment" "engineers_ec2" {
   group = aws_iam_group.engineers.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess"
+  policy_arn = aws_iam_policy.require_mfa.arn
 }
