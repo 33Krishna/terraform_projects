@@ -43,3 +43,26 @@ resource "aws_iam_group_membership" "engineers_members" {
     for user in aws_iam_user.users : user.name if user.tags.Department == "Engineering"
   ]
 }
+
+# NEXT STEP : 1. Add IAM Policies to Groups
+# Education --> ReadOnlyAccess
+# Managers --> FullAccess
+# Engineers --> EC2 / Dev Access
+
+# Education group role access
+resource "aws_iam_group_policy_attachment" "education_readonly" {
+  group = aws_iam_group.education.name
+  policy_arn = "arn:aws:iam::aws:policy/ReadOnlyAccess"
+}
+
+# Manager group role access
+resource "aws_iam_group_policy_attachment" "managers_admin" {
+  group = aws_iam_group.managers.name
+  policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
+}
+
+# Engineer Group Access
+resource "aws_iam_group_policy_attachment" "engineers_ec2" {
+  group = aws_iam_group.engineers.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess"
+}
