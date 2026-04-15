@@ -17,6 +17,10 @@ This project demonstrates how to manage AWS IAM users, groups, and group members
 3. **AWS Permissions**: IAM user creation and management permissions
 4. **S3 Bucket** for Terraform state (see setup below)
 
+## 🏗️ Architecture
+
+![IAM User Management Architecture](./images/IAM_Full_Diagram.png)
+
 ## Quick Start
 
 ### 1. Create S3 Backend Bucket
@@ -54,133 +58,59 @@ Go to [IAM Console](https://console.aws.amazon.com/iam/) and check:
 
 ```
 03_mini_project/
+├── images/
+│   ├── IAM_Full_Diagram.png  # Full Architecture Diagram
+├── .github/workflows/
+│   ├── terraform-apply.yml # CI/CD Pipeline triggered for any change in users.csv
 ├── backend.tf          # S3 backend configuration
 ├── provider.tf         # AWS provider setup
 ├── versions.tf         # Terraform and provider versions
 ├── main.tf            # User creation and CSV parsing
 ├── groups.tf          # Group and membership management
+├── locals.tf          # Local values
+├── mfa.tf             # MFA policy
 ├── users.csv          # User data source
+├── output.tf          # Output values
+├── Interview.md       # Interview Questions
 └── README.md          # This file
 ```
 
 ## How It Works
 
 ### Step 1: Read CSV File
-
-The `main.tf` file reads the `users.csv` file:
-
-```terraform
-locals {
-  users = csvdecode(file("users.csv"))
-}
-```
-
 ### Step 2: Create IAM Users
-
-Users are created with a username format: `{first_initial}{lastname}` (e.g., `mscott`):
-
-```terraform
-resource "aws_iam_user" "users" {
-  for_each = { for user in local.users : user.first_name => user }
-  
-  name = lower("${substr(each.value.first_name, 0, 1)}${each.value.last_name}")
-  path = "/users/"
-  
-  tags = {
-    "DisplayName" = "${each.value.first_name} ${each.value.last_name}"
-    "Department"  = each.value.department
-    "JobTitle"    = each.value.job_title
-  }
-}
-```
+Users are created with a username format: `{first_initial}{lastname}` (e.g., `sjinwoo`):
 
 ### Step 3: Enable Console Access
-
 Login profiles are created for console access with password reset required:
 
-```terraform
-resource "aws_iam_user_login_profile" "users" {
-  for_each = aws_iam_user.users
-  
-  user                    = each.value.name
-  password_reset_required = true
-}
-```
-
 ### Step 4: Create Groups and Memberships
-
 Groups are created and users are dynamically assigned based on their department:
 
-```terraform
-resource "aws_iam_group" "education" {
-  name = "Education"
-  path = "/groups/"
-}
-
-resource "aws_iam_group_membership" "education_members" {
-  name  = "education-group-membership"
-  group = aws_iam_group.education.name
-  
-  users = [
-    for user in aws_iam_user.users : user.name 
-    if user.tags.Department == "Education"
-  ]
-}
-```
-
 ## Outputs
-
 After applying, you can view the outputs:
 
-```
-# View AWS Account ID
-terraform output account_id
-
-# View all user names
-terraform output user_names
-
-# View password information (sensitive)
-terraform output user_passwords
-```
-
 ## User List
-
 The following users are created from `users.csv`:
 
-| Username | Full Name | Department | Job Title |
-|----------|-----------|------------|-----------|
-| mscott | Michael Scott | Education | Regional Manager |
-| dschrute | Dwight Schrute | Sales | Assistant to the Regional Manager |
-| jhalpert | Jim Halpert | Sales | Sales Representative |
-| pbeesly | Pam Beesly | Reception | Receptionist |
-| rhoward | Ryan Howard | Temps | Temp |
-| ... and 21 more users |
+| Username | Full Name | Department | Job Title | email | location | access_level |
+|----------|-----------|------------|-----------|-------|----------|--------------|
+| sjinwoo | Sung Jinwoo | Accounting | Accountant | [EMAIL_ADDRESS] | South Korea | read |
+| ... and 24 more users |
 
 ## Groups and Memberships
 
-### Education Group
-- Michael Scott (mscott)
-
-### Managers Group
-Users with "Manager" or "CEO" in their job title:
-- Michael Scott (mscott)
-- Robert California (rcalifornia)
-- Darryl Philbin (dphilbin)
-- David Wallace (dwallace)
-- Jo Bennett (jbennett)
-
-### Engineers Group
-- Currently empty (no users with "Engineering" department in CSV)
-
-## Customization
+## Education Group
+## Managers Group
+## Engineers Group
 
 ### Add More Users
 
 Edit `users.csv` and add new rows:
 
 ```csv
-first_name,last_name,department,job_title
-Jane,Doe,Engineering,Software Engineer
+first_name,last_name,department,job_title,email,location,access_level
+Levi,Ackerman,Warehouse,Warehouse Foreman,levi@company.com,Germany,read
 ```
 
 Then run:
@@ -190,27 +120,6 @@ terraform apply
 ```
 
 ### Add IAM Policies to Groups
-
-Add to `groups.tf`:
-
-```terraform
-resource "aws_iam_group_policy_attachment" "education_readonly" {
-  group      = aws_iam_group.education.name
-  policy_arn = "arn:aws:iam::aws:policy/ReadOnlyAccess"
-}
-```
-
-### Change Username Format
-
-Modify the `name` attribute in `main.tf`:
-
-```terraform
-# Current: {first_initial}{lastname} (e.g., mscott)
-name = lower("${substr(each.value.first_name, 0, 1)}${each.value.last_name}")
-
-# Alternative: {firstname}.{lastname} (e.g., michael.scott)
-name = lower("${each.value.first_name}.${each.value.last_name}")
-```
 
 ## Password Management
 
@@ -254,21 +163,21 @@ aws sts get-caller-identity
 Import existing user into state:
 
 ```
-terraform import aws_iam_user.users[\"Michael\"] mscott
+terraform import aws_iam_user.users[\"Sung\"] sjinwoo
 ```
 
 Or delete the existing user:
 
 ```
-aws iam delete-login-profile --user-name mscott
-aws iam delete-user --user-name mscott
+aws iam delete-login-profile --user-name sjinwoo
+aws iam delete-user --user-name sjinwoo
 ```
 
 ### View Terraform State
 
 ```
 terraform state list
-terraform state show aws_iam_user.users[\"Michael\"]
+terraform state show aws_iam_user.users[\"Sung\"]
 ```
 
 ## Best Practices
@@ -304,12 +213,68 @@ terraform state show aws_iam_user.users[\"Michael\"]
 - [AWS IAM Best Practices](https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html)
 - [Terraform Functions](https://www.terraform.io/language/functions)
 
-## Success! ✅
-
 Your AWS IAM infrastructure is now managed as code. You can:
 - Add new users by editing the CSV
 - Modify group memberships by changing user attributes
 - Version control all changes
 - Replicate this setup across multiple AWS accounts
 
+## 🚀 Advanced Features Implemented
+
+### 🔐 IAM Policy Management
+- Attached AWS managed policies to groups (ReadOnly, Admin, EC2 access)
+- Implemented Role-Based Access Control (RBAC)
+
+### 🔐 MFA Enforcement
+- Enforced Multi-Factor Authentication using IAM policy
+- Denies access if MFA is not enabled
+
+### ⚙️ CI/CD Automation
+- Integrated GitHub Actions for Terraform automation
+- Automatically provisions infrastructure on CSV/code changes
+
+### 📊 Extended User Attributes
+- Added email, location, and access level fields in CSV
+- Enabled dynamic access control using AccessLevel
+
+### 🧠 Dynamic Group Assignment
+- Users assigned to groups based on tags (Department, AccessLevel)
+- Eliminated hardcoded logic
+
+## ⚙️ CI/CD Workflow
+
+This project uses GitHub Actions to automate Terraform execution.
+
+### Workflow:
+1. Developer updates `users.csv` or Terraform files
+2. Changes are pushed to GitHub
+3. GitHub Actions pipeline is triggered
+4. Terraform runs:
+   - terraform init
+   - terraform plan
+   - terraform apply
+5. AWS IAM resources are updated automatically
+
+### Benefits:
+- Fully automated onboarding
+- No manual Terraform execution
+- Consistent infrastructure deployment
+
+## 🔐 Security Enhancements
+
+- MFA enforcement using IAM policy
+- Least privilege access using group-based policies
+- No hardcoded credentials (used GitHub Secrets)
+- Password reset enforced on first login
+- Recommended migration to AWS SSO for production
+
+## 🏢 Production Considerations
+
+- Replace IAM Users with AWS Identity Center (SSO)
+- Use IAM Roles instead of access keys
+- Integrate with real HR systems (Workday, SAP)
+- Implement approval workflow in CI/CD
+- Enable CloudTrail for auditing
+
+## Success! ✅
 Happy Terraforming! 🚀
