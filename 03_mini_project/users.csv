@@ -1,27 +1,22 @@
-first_name,last_name,department,job_title
-Michael,Scott,Education,Regional Manager
-Ryomen,Sukuna,Sales,Assistant to the Regional Manager
-Satoru,Gojo,Sales,Sales Representative
-Megumi,Fushiguro,Reception,Receptionist
-Denji,Higashiyama,Temps,Temp
-Kobeni,Higashiyama,Sales,Sales Representative
-Makima,Kishibe,Corporate,CEO
-Nobara,Kugisaki,Sales,Sales Representative
-Cha,Hae-in,Accounting,Accountant
-Sung,Jinwoo,Accounting,Accountant
-Sung,Jin-ah,Accounting,Accountant
-Tanjiro,Kamado,Sales,Sales Representative
-Naruto,Uzumaki,HR,HR Representative
-Kelly,Kapoor,Customer Service,Customer Service Representative
-Levi,Ackerman,Warehouse,Warehouse Foreman
-Eren,Yeager,Quality Assurance,Quality Assurance
-Seishiro,Nagi,Supplier Relations,Supplier Relations
-Yoichi,Isagi,Reception,Receptionist
-Ichigo,Kurosaki,Corporate,Coordinating Director of Emerging Regions
-Sousuke,Aizen,Corporate,Vice President of Northeast Sales
-Loid,Forger,Corporate,CFO
-Yor,Forger,HR,HR Representative
-Sakamoto,Takashi,Corporate,Vice President of the Northeast Region
-Virat,Kohli,Corporate,CEO of Sabre
-Monkey D,Luffy,Sales,Sales Representative
-Roronoa,Zoro,Customer Service,Customer Service Representative
+first_name,last_name,department,job_title,email,location,access_level
+Michael,Scott,Education,Regional Manager,michael@company.com,US,admin
+Ryomen,Sukuna,Sales,Assistant to the Regional Manager,sukuna@company.com,Japan,admin
+Satoru,Gojo,Sales,Sales Representative,gojo@company.com,Japan,read
+Megumi,Fushiguro,Reception,Receptionist,megumi@company.com,Japan,read
+Denji,Higashiyama,Temps,Temp,denji@company.com,Japan,read
+Kobeni,Higashiyama,Sales,Sales Representative,kobeni@company.com,South Korea,read
+Makima,Kishibe,Corporate,CEO,makima@company.com,India,admin
+Nobara,Kugisaki,Sales,Sales Representative,nobara@company.com,read
+Cha,Hae-in,Accounting,Accountant,chahaein@company.com,South Korea,read
+Sung,Jinwoo,Accounting,Accountant,jinwoo@company.com,South Korea,read
+Sung,Jin-ah,Accounting,Accountant,jinah@company.com,South Korea,read
+Tanjiro,Kamado,Sales,Sales Representative,tanjiro@company.com,Japan,read
+Naruto,Uzumaki,HR,HR Representative,naruto@company.com,India,read
+Levi,Ackerman,Warehouse,Warehouse Foreman,levi@company.com,Germany,read
+Eren,Yeager,Quality Assurance,Quality Assurance,eren@company.com,Germany,read
+Loid,Forger,Corporate,CFO,loid@company.com,Germany,admin
+Yor,Forger,HR,HR Representative,yor@company.com,Germany,read
+Sakamoto,Takashi,Corporate,Vice President of the Northeast Region,sakamoto@company.com,Japan,admin
+Virat,Kohli,Corporate,CEO of Cricket,virat@company.com,India,admin
+Monkey D,Luffy,Sales,Sales Representative,luffy@company.com,Japan,read
+Roronoa,Zoro,Customer Service,Customer Service Representative,zoro@company.com,Japan,read

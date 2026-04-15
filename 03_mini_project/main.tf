@@ -10,11 +10,14 @@ for_each = {
   name = lower("${substr(each.value.first_name, 0, 1)}${each.value.last_name}")
   path = "/users/"
 
-  tags = {
-    "DisplayName" = "${each.value.first_name} ${each.value.last_name}"
-    "Department" = each.value.department
-    "JobTitle" = each.value.job_title
-  }
+tags = {
+  DisplayName = "${each.value.first_name} ${each.value.last_name}"
+  Department  = each.value.department
+  JobTitle    = each.value.job_title
+  Email       = each.value.email
+  Location    = each.value.location
+  AccessLevel = each.value.access_level
+}
 }
 
 # Create IAM login profiles ( Password )
