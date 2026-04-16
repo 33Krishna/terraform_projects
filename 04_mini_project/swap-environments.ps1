@@ -1,5 +1,4 @@
 # Script to perform the Blue-Green swap
-
 param(
     [Parameter(Mandatory=$false)]
     [string]$Region = "us-east-1",

@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # Script to perform the Blue-Green swap
-
 # Default values
 REGION="us-east-1"
 BLUE_ENV=""

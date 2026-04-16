@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # Script to package applications for Elastic Beanstalk deployment
 
 echo "====================================="

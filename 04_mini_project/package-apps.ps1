@@ -1,5 +1,4 @@
 # Script to package applications for Elastic Beanstalk deployment
-
 Write-Host "=====================================" -ForegroundColor Cyan
 Write-Host "Packaging Applications for Deployment" -ForegroundColor Cyan
 Write-Host "=====================================" -ForegroundColor Cyan
