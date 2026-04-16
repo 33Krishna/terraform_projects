@@ -1,7 +1,7 @@
 {
-  "name": "bluegreen-demo-v1",
+  "name": "bluegreen-v1",
   "version": "1.0.0",
-  "description": "Blue-Green Deployment Demo - Version 1.0",
+  "description": "Blue-Green Deployment - Version 1.0",
   "main": "app.js",
   "scripts": {
     "start": "node app.js"
