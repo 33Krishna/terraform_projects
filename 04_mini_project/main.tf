@@ -34,13 +34,13 @@ resource "aws_iam_role" "eb_ec2_role" {
 # Attach the AWS managed policy for web tier
 resource "aws_iam_role_policy_attachment" "eb_web_tier" {
   role = aws_iam_role.eb_ec2_role.name
-  policy_arn = "rn:aws:iam::aws:policy/AWSElasticBeanstalkWebTier"
+  policy_arn = "arn:aws:iam::aws:policy/AWSElasticBeanstalkWebTier"
 }
 
 # Attach the AWS managed policy for worker tier
 resource "aws_iam_role_policy_attachment" "eb_worker_tier" {
   role = aws_iam_role.eb_ec2_role.name
-  policy_arn = "rn:aws:iam::aws:policy/AWSElasticBeanstalkWorkerTier"
+  policy_arn = "arn:aws:iam::aws:policy/AWSElasticBeanstalkWorkerTier"
 }
 
 # Attach the AWS managed policy for Multicontainer Docker
