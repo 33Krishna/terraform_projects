@@ -13,7 +13,7 @@ Each project demonstrates a specific concept with production-oriented thinking.
 * Hosten a static website on S3 bucket
 * Integrated CI/CD for automated deployment and lot more features. Dive into project folder to know more. 
 
-👉 [View Project](./01-static-website-hosting)
+👉 [View Project](./01_static_website_hosting)
 
 ---
 
@@ -22,7 +22,7 @@ Each project demonstrates a specific concept with production-oriented thinking.
 * VPC Peering between two VPCs and extends it into 3 VPCs using Transit Gateway for scalable networking.
 * Focus: Networking fundamentals and Transit Gateway. Dive into project folder to know more. 
 
-👉 [View Project](./02-vpc-peering)
+👉 [View Project](./02_vpc_peering)
 
 ---
 
@@ -31,7 +31,7 @@ Each project demonstrates a specific concept with production-oriented thinking.
 * Managed IAM users and roles using Terraform
 * Automated access setup with CI/CD integration. Dive into project folder to know more. 
 
-👉 [View Project](./03-iam-user-management)
+👉 [View Project](./03_iam_user_management)
 
 ---
 
@@ -41,7 +41,7 @@ Each project demonstrates a specific concept with production-oriented thinking.
 * Terraform-based infrastructure provisioning
 * CNAME swap for instant traffic switch
 
-👉 [View Project](./04-blue-green-deployment)
+👉 [View Project](./04_blue_green_deployment)
 
 ---
 
