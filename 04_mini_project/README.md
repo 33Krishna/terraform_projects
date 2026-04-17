@@ -35,6 +35,8 @@ This Terraform project creates:
 └─────────────────────────────────────────────────────────────┘
 ```
 
+![Blue-Green Deployment Architecture](./images/Blue_Green_Deployment.png)
+
 ## 📋 Prerequisites
 
 1. **AWS Account** with appropriate permissions
