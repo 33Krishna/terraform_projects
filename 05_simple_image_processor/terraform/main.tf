@@ -131,6 +131,13 @@ resource "aws_iam_role_policy" "lambda_policy" {
           "s3:PutObjectAcl"
         ]
         Resource = "${aws_s3_bucket.processed_bucket.arn}/*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "sqs:SendMessage"
+        ]
+        Resource = aws_sqs_queue.lambda_dlq.arn
       }
     ]
   })
@@ -168,6 +175,10 @@ resource "aws_lambda_function" "image_processor" {
   runtime          = "python3.12"
   timeout          = 60
   memory_size      = 1024
+
+  dead_letter_config {
+    target_arn = aws_sqs_queue.lambda_dlq.arn
+  }
 
   layers = [aws_lambda_layer_version.pillow_layer.arn]
 
@@ -208,4 +219,9 @@ resource "aws_s3_bucket_notification" "upload_bucket_notification" {
   }
 
   depends_on = [aws_lambda_permission.allow_s3]
+}
+
+# DLQ Queue
+resource "aws_sqs_queue" "lambda_dlq" {
+  name = "${local.lambda_function_name}-dlq"
 }
