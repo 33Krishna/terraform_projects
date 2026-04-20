@@ -36,6 +36,11 @@ def lambda_handler(event, context):
             # Download the image from S3
             response = s3_client.get_object(Bucket=bucket, Key=key)
             image_data = response['Body'].read()
+
+            # Validate image before processing
+            if not is_valid_image(image_data, key):
+                logger.warning(f"Skipping invalid file: {key}")
+                continue
             
             # Process the image
             processed_images = process_image(image_data, key)
@@ -80,6 +85,23 @@ def lambda_handler(event, context):
             })
         }
 
+def is_valid_image(image_data, key):
+    """
+    Validate uploaded file is real image
+    """
+    allowed_extensions = ('.jpg', '.jpeg', '.png', '.webp', '.bmp', '.gif')
+
+    if not key.lower().endswith(allowed_extensions):
+        logger.warning(f"Invalid extension: {key}")
+        return False
+
+    try:
+        img = Image.open(BytesIO(image_data))
+        img.verify()
+        return True
+    except Exception:
+        logger.warning(f"Corrupted or invalid image file: {key}")
+        return False
 
 def process_image(image_data, original_key):
     """
