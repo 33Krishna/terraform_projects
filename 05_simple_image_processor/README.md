@@ -2,7 +2,18 @@
 
 A simplified serverless image processing pipeline that automatically processes images uploaded to S3.
 
-## 🎯 Architecture
+## ✨ Highlights
+
+- Fully automated serverless image processing pipeline
+- Built with Terraform (Infrastructure as Code)
+- Uses AWS Lambda + S3 + CloudWatch
+- Generates 5 optimized image variants automatically
+- Uses Docker-built Pillow Lambda Layer
+- Secure private buckets with encryption + versioning
+
+## 🏗️ Architecture Diagram
+
+![Architecture](./images/image_processor_diagram.png)
 
 ```
 ┌─────────────────┐
@@ -32,6 +43,40 @@ A simplified serverless image processing pipeline that automatically processes i
 - **Lambda Function**: Image processor with Pillow library
 - **Lambda Layer**: Pillow 10.4.0 for image manipulation
 - **S3 Event Trigger**: Automatically invokes Lambda on upload
+
+## 📁 Project Structure
+
+05_simple_image_processor/
+├── lambda/
+│   ├── lambda_function.py
+│   └── requirements.txt
+├── scripts/
+│   ├── build_layer_docker.sh
+│   ├── deploy.sh
+│   └── destroy.sh
+├── terraform/
+│   ├── main.tf
+│   ├── variables.tf
+│   ├── outputs.tf
+│   ├── provider.tf
+│   ├── terraform.tfvars
+│   └── README.md
+└── README.md
+
+## 🛠️ Tech Stack
+
+- Terraform
+- AWS S3
+- AWS Lambda
+- CloudWatch
+- IAM
+- Docker
+- Python (Pillow)
+- Bash Scripting
+
+![Terraform](https://img.shields.io/badge/Terraform-IaC-blue)
+![AWS](https://img.shields.io/badge/AWS-Serverless-orange)
+![Python](https://img.shields.io/badge/Python-Lambda-green)
 
 ## 🚀 Deployment
 
@@ -182,3 +227,20 @@ variants['your_variant'].save(buffer, format='JPEG', quality=75)
 - Max image size: Limited by Lambda memory (1024 MB)
 - Supported regions: All AWS regions
 - No frontend required - pure backend automation
+
+## 🌍 Real-World Use Cases
+
+- E-commerce product image optimization
+- Blog / CMS media processing
+- Social media thumbnail generation
+- Portfolio/gallery image compression
+- CDN-ready image variants
+
+## 🚀 Future Improvements
+
+- Add SQS + DLQ retry handling
+- Add CI/CD with GitHub Actions
+- Add API Gateway upload endpoint
+- Add CloudFront CDN delivery
+
+Happy Building! 🚀
