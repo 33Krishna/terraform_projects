@@ -13,7 +13,7 @@ A simplified serverless image processing pipeline that automatically processes i
 
 ## 🏗️ Architecture Diagram
 
-![Architecture](./images/image_processor_diagram.png)
+![Architecture](./images/architecture.png)
 
 ```
 ┌─────────────────┐
