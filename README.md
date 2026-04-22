@@ -45,12 +45,36 @@ Each project demonstrates a specific concept with production-oriented thinking.
 
 ---
 
+### 5️⃣ Serverless Image Processor
+
+* Built an automated image processing pipeline using AWS Lambda + S3
+* Uploading an image to S3 triggers Lambda automatically
+* Generates optimized variants such as JPEG, WebP, PNG, and thumbnails
+* Uses Terraform for complete infrastructure provisioning
+* Includes CloudWatch logging and secure private buckets
+
+👉 [View Project](./05_simple_image_processor)
+
+---
+
+### 6️⃣ EC2 Provisioners Automation
+
+* Created EC2 instance using Terraform on AWS
+* Automated post-deployment tasks using local-exec, remote-exec, and file provisioners
+* Focus: Infrastructure provisioning with server bootstrap automation
+
+👉 [View Project](./06_terraform_provisioner)
+
+---
+
 ## 🧠 Key Learnings
 
 * Infrastructure as Code (Terraform)
 * AWS core services
 * Deployment strategies
 * Scalable and secure architecture design
+* Server provisioning and automation
+* Networking and IAM fundamentals
 
 ---
 
@@ -59,6 +83,8 @@ Each project demonstrates a specific concept with production-oriented thinking.
 * Terraform
 * AWS
 * Bash / PowerShell
+* Python
+* Docker
 * Git & GitHub
 
 ---
