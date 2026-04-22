@@ -1,4 +1,4 @@
-# Terraform Provisioners Project
+# Terraform Provisioners Project (Mini Project 06)
 
 ## 📚 What Are Provisioners?
 
