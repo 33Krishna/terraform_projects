@@ -1,4 +1,4 @@
-# VPC and Peering (Mini Project 02)
+# VPC and Peering (Project 02)
 
 ## Overview
 This project showcases **AWS VPC Peering** by creating two VPCs in different AWS regions and establishing a peering connection between them. This allows resources in both VPCs to communicate with each other using private IP addresses.

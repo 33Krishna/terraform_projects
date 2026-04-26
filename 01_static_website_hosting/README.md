@@ -1,4 +1,4 @@
-# Static Website Hosting (Mini Project 01)
+# Static Website Hosting (Project 01)
 
 ## 🎯 Project Overview
 
