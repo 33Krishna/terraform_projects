@@ -67,6 +67,26 @@ Each project demonstrates a specific concept with production-oriented thinking.
 
 ---
 
+### 7️⃣ EKS Cluster
+
+* Provisioned a production-style Amazon EKS Kubernetes cluster using Terraform with reusable custom modules.
+* Built modular infrastructure including VPC, IAM, EKS, and Secrets Manager components.
+
+* Multi-AZ architecture with public/private subnets
+* Private worker nodes for secure workloads
+* On-Demand + Spot node groups for cost optimization
+* IAM Roles + OIDC / IRSA ready setup
+* KMS encryption for Kubernetes secrets
+* CloudWatch logging enabled
+* Deployed workloads using kubectl
+* Ingress setup using AWS Load Balancer Controller
+* Monitoring stack with Prometheus + Grafana
+* GitOps workflow using ArgoCD ready architecture
+
+👉 [View Project](./07_EKS_Cluster)
+
+---
+
 ## 🧠 Key Learnings
 
 * Infrastructure as Code (Terraform)
