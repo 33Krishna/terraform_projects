@@ -93,7 +93,7 @@ You can customize the cluster by modifying `terraform.tfvars`:
 ```hcl
 aws_region         = "us-east-1"        # Change to your preferred region
 cluster_name       = "07-eks-cluster" # Your cluster name
-kubernetes_version = "1.36"              # Kubernetes version
+kubernetes_version = "1.32"              # Kubernetes version
 environment        = "development"       # Environment tag
 
 # VPC settings
