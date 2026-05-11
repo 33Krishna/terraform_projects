@@ -37,6 +37,8 @@ This project demonstrates how to implement **AWS Policy Creation** and **Governa
 └─────────────────────────────┘
 ```
 
+![Architecture](./images/8_Project_Diagram.png)
+
 ## 📁 Project Structure
 
 ```
