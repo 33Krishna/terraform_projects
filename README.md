@@ -87,6 +87,19 @@ Each project demonstrates a specific concept with production-oriented thinking.
 
 ---
 
+### 8️⃣ AWS Policy & Governance
+
+* Implemented AWS cloud governance and security automation using Terraform
+* Created IAM policies to enforce MFA, encryption, and tagging standards
+* Configured AWS Config for continuous compliance monitoring
+* Secured S3 buckets with encryption, versioning, and public access blocking
+* Implemented automated compliance rules for S3, EBS, IAM, and MFA validation
+* Demonstrated Policy as Code and enterprise-level cloud security practices
+
+👉 [View Project](./08_AWS_Policy_Governance)
+
+---
+
 ## 🧠 Key Learnings
 
 * Infrastructure as Code (Terraform)
