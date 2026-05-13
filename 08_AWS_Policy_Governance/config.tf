@@ -29,9 +29,10 @@ resource "aws_config_configuration_recorder_status" "main" {
 
 # ------------------------------------------------------------------------------
 # AWS Config Rules - Compliance Checks
+# FIX: Pehle 6 rules the, 7th (IAM Password Policy) missing tha
 # ------------------------------------------------------------------------------
 
-# Config Rule: Ensure S3 buckets do not allow public write
+# Config Rule 1: Ensure S3 buckets do not allow public write
 resource "aws_config_config_rule" "s3_public_write_prohibited" {
   name = "s3-bucket-public-write-prohibited"
 
@@ -43,7 +44,7 @@ resource "aws_config_config_rule" "s3_public_write_prohibited" {
   depends_on = [aws_config_configuration_recorder.main]
 }
 
-# Config Rule: Ensure S3 buckets have encryption enabled
+# Config Rule 2: Ensure S3 buckets have encryption enabled
 resource "aws_config_config_rule" "s3_encryption" {
   name = "s3-bucket-server-side-encryption-enabled"
 
@@ -55,7 +56,7 @@ resource "aws_config_config_rule" "s3_encryption" {
   depends_on = [aws_config_configuration_recorder.main]
 }
 
-# Config Rule: Ensure S3 buckets block public access
+# Config Rule 3: Ensure S3 buckets block public access
 resource "aws_config_config_rule" "s3_public_read_prohibited" {
   name = "s3-bucket-public-read-prohibited"
 
@@ -67,7 +68,7 @@ resource "aws_config_config_rule" "s3_public_read_prohibited" {
   depends_on = [aws_config_configuration_recorder.main]
 }
 
-# Config Rule: Ensure EBS volumes are encrypted
+# Config Rule 4: Ensure EBS volumes are encrypted
 resource "aws_config_config_rule" "ebs_encryption" {
   name = "encrypted-volumes"
 
@@ -79,7 +80,7 @@ resource "aws_config_config_rule" "ebs_encryption" {
   depends_on = [aws_config_configuration_recorder.main]
 }
 
-# Config Rule: Ensure EC2 instances have required tags
+# Config Rule 5: Ensure EC2 instances have required tags
 resource "aws_config_config_rule" "required_tags" {
   name = "required-tags"
 
@@ -103,13 +104,26 @@ resource "aws_config_config_rule" "required_tags" {
   depends_on = [aws_config_configuration_recorder.main]
 }
 
-# Config Rule: Ensure root account has MFA enabled
+# Config Rule 6: Ensure root account has MFA enabled
 resource "aws_config_config_rule" "root_mfa_enabled" {
   name = "root-account-mfa-enabled"
 
   source {
     owner             = "AWS"
     source_identifier = "ROOT_ACCOUNT_MFA_ENABLED"
+  }
+
+  depends_on = [aws_config_configuration_recorder.main]
+}
+
+# Rule 7: IAM Password Policy
+# FIX: Yeh rule README mein tha but code mein missing tha
+resource "aws_config_config_rule" "iam_password_policy" {
+  name = "iam-password-policy"
+
+  source {
+    owner             = "AWS"
+    source_identifier = "IAM_PASSWORD_POLICY"
   }
 
   depends_on = [aws_config_configuration_recorder.main]
