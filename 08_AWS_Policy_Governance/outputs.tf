@@ -17,6 +17,16 @@ output "require_tags_policy_arn" {
   value       = aws_iam_policy.require_tags_policy.arn
 }
 
+# ------------------------------------------------------------------------------
+# IAM Group Outputs
+# FIX: Group outputs add kiye — kal koi naya user add karna ho
+#      toh group name pata hoga
+# ------------------------------------------------------------------------------
+
+output "security_group_name" {
+  description = "IAM Group name — naya user isme add karo"
+  value       = aws_iam_group.security_group.name
+}
 output "demo_user_name" {
   description = "Name of the demo IAM user"
   value       = aws_iam_user.demo_user.name
@@ -63,7 +73,8 @@ output "config_rules" {
     aws_config_config_rule.s3_public_read_prohibited.name,
     aws_config_config_rule.ebs_encryption.name,
     aws_config_config_rule.required_tags.name,
-    aws_config_config_rule.root_mfa_enabled.name
+    aws_config_config_rule.root_mfa_enabled.name,
+    aws_config_config_rule.iam_password_policy.name,
   ]
 }
 
