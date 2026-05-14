@@ -18,3 +18,5 @@ db_username          = "admin"
 db_instance_class    = "db.t3.micro"
 db_allocated_storage = 10
 db_engine_version    = "8.0"
+
+key_name = "my-key-pair"
