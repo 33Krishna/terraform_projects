@@ -133,17 +133,39 @@ The architecture you'd actually use in a real backend system.
 👉 [View Project](./09_2tier_web_app)
  
 ---
+
+### 🔟 End-to-End AWS Observability - Lambda Monitoring & S3 Security Alerting
+ 
+Built a production-grade observability stack for two real scenarios most teams skip -
+knowing when your Lambda pipeline is breaking, and knowing when someone is poking around
+your S3 buckets. Logs flow in, patterns get detected, alarms fire, emails land - all automated.
+ 
+**What makes it interesting:**
+- Two independent monitoring systems in one project: operational + security observability
+- 13 CloudWatch Alarms across 3 severity tiers - Critical, Performance, and Log-based
+  each routed to a separate SNS topic so the right person gets the right alert
+- CloudWatch Metric Filters extract custom business metrics directly from Lambda logs -
+  processing time, success rate, image size - not just what AWS gives you out of the box
+- CloudTrail data events stream into CloudWatch Logs and get scanned for AccessDenied errors
+  and restricted prefix access - suspicious S3 activity triggers an email in under 60 seconds
+- IAM Condition blocks restrict CloudWatch metric publishing to a project-specific namespace -
+  least privilege applied beyond just actions and resources
+- 9 reusable Terraform modules with clean input/output contracts - swap variables, redeploy
+  against any environment or function
+👉 [View Project](./10_end_to_end_observability)
+
+---
  
 ## 🧠 Core Concepts Across Projects
  
 | Concept | Projects |
 |---|---|
-| Modular Terraform | 7, 8, 9 |
+| Modular Terraform | 7, 8, 9, 10 |
 | Networking & VPC Design | 2, 7, 9 |
-| IAM & Least Privilege | 3, 5, 7, 8 |
+| IAM & Least Privilege | 3, 5, 7, 8, 10 |
 | Secrets & Credential Management | 7, 9 |
 | CI/CD Integration | 1, 3 |
-| Serverless & Event-Driven | 5 |
+| Serverless & Event-Driven | 5, 10 |
 | Container Orchestration | 7 |
 | Zero-Downtime Deployments | 4 |
 | Compliance & Governance | 8 |
@@ -153,7 +175,7 @@ The architecture you'd actually use in a real backend system.
  
 ## ⚙️ Tools & Technologies
  
-**Infrastructure:** Terraform · AWS (EC2, RDS, S3, VPC, EKS, Lambda, IAM, Secrets Manager, Config, Beanstalk)
+**Infrastructure:** Terraform · AWS
  
 **Application:** Python · Flask · Bash
  
