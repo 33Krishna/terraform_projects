@@ -11,6 +11,8 @@ This project demonstrates deploying a complete web application stack on AWS usin
 
 ## Architecture
 
+![Architecture](./images/9_Diagram.png)
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                         VPC (10.0.0.0/16)                   │
