@@ -64,7 +64,7 @@ jobs:
           scan-type: "config"
           hide-progress: false
           format: "table"
-          exit-code: "0"
+          exit-code: "0" # Make this '1' to fail the pipeline on critical issues detected
           ignore-unfixed: true
           severity: "CRITICAL,HIGH"
 

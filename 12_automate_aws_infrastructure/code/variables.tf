@@ -7,7 +7,7 @@ variable "region" {
 variable "environment" {
   description = "Environment name (e.g., dev, staging, production)"
   type        = string
-  default     = "production"
+  default     = "dev"
 }
 
 variable "vpc_cidr" {
