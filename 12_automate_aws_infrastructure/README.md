@@ -6,8 +6,8 @@ This repository follows the **Infrastructure as Code (IaC)** best practice of "S
 
 ## 🏗️ Architecture Diagram
 
-![Architecture Diagram](code\images\1_12_Project_Diagram.png)
-![Architecture Diagram](code\images\2_12_Project_Diagram.png)
+![Architecture Diagram](code/images/1_12_Project_Diagram.png)
+![Architecture Diagram](code/images/2_12_Project_Diagram.png)
 
 ### 🔄 CI/CD Workflow (Infrastructure Only)
 This repository uses a dedicated GitHub Actions workflow (`.github/workflows/terraform.yml`) that:
