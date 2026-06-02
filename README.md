@@ -155,6 +155,47 @@ your S3 buckets. Logs flow in, patterns get detected, alarms fire, emails land -
 👉 [View Project](./10_end_to_end_observability)
 
 ---
+
+1️⃣1️⃣ **High Available/Scalable Infrastructure Deployment**
+Built a production-grade, multi-AZ infrastructure that handles traffic spikes automatically and never goes down from a single failure - Django in Docker, private EC2 instances, and a self-healing ASG behind an ALB.
+
+**What makes it interesting:**
+- Multi-AZ deployment - one AZ goes down, the other keeps serving traffic without interruption
+- Auto Scaling Group scales from 1 to 5 instances based on CPU - no manual intervention ever
+- EC2 instances live in private subnets - only reachable through the ALB, never directly from internet
+- Two NAT Gateways, one per AZ - true HA with no shared outbound dependency
+- CloudWatch alarms trigger scaling at 80% CPU, scale back in at 20% - cost stays controlled
+- IMDSv2 enforced on all instances - SSRF attacks blocked at the metadata layer
+👉 [View Project](./11_high_available_scalable_infra)
+
+---
+
+1️⃣2️⃣ Production AWS Infrastructure - Terraform Multi-Environment CI/CD
+Built a production-grade 2-tier AWS infrastructure with a complete CI/CD pipeline - 
+three isolated environments (dev, test, prod), automated security scanning, and a 
+manual approval gate before anything touches production. The kind of setup real 
+engineering teams actually use.
+
+**What makes it interesting:**
+
+Three fully isolated environments from one codebase - Terraform workspaces keep 
+dev, test, and prod state completely separate, different VPC CIDRs, different 
+scaling configs, zero cross-contamination
+Every PR triggers automated security scanning - TFLint catches code quality issues, 
+Trivy scans for CRITICAL/HIGH misconfigurations before a single resource is created
+Production deployments require human approval - pipeline pauses, waits for a 
+reviewer to sign off, then applies the exact same plan artifact that was reviewed - 
+no surprises
+S3 native state locking - no DynamoDB table needed, concurrent applies are blocked 
+at the backend level
+Multi-AZ high availability - 2 NAT Gateways, ALB distributing across AZs, ASG with 
+target tracking + CloudWatch alarms for dynamic scaling
+Dedicated destroy workflow - manual trigger only, type "DESTROY" to confirm, 
+protected by the same approval gate as production
+
+👉 [View Project](./12_multi_environment_cicd_pipeline)
+
+---
  
 ## 🧠 Core Concepts Across Projects
  
