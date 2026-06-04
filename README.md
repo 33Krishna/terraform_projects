@@ -196,18 +196,34 @@ protected by the same approval gate as production
 👉 [View Project](./12_multi_environment_cicd_pipeline)
 
 ---
+
+1️⃣3️⃣ **Goal Tracker - AWS 3-Tier Infrastructure**
+Built a production-grade, highly available 3-tier application on AWS - Node.js frontend,
+Go backend API, and PostgreSQL database - each tier isolated in its own private subnets
+across two AZs, provisioned entirely with modular Terraform and containerized with Docker.
+
+**What makes it interesting:**
+- True 3-tier isolation - frontend, backend, and database each live in separate private subnets with zero cross-tier access except through scoped Security Group rules
+- Two load balancers - External ALB for internet traffic, Internal ALB for frontend-to-backend communication - backend is never directly exposed
+- Auto Scaling Groups on both tiers - Frontend scales 2→4, Backend scales 2→6 instances on CPU - each tier scales independently based on its own load
+- DB credentials never touch the codebase - Secrets Manager auto-generates a 32-char password, backend fetches it at runtime via IAM role, no plaintext anywhere
+- Bastion host + SSM dual access - traditional SSH jump and Session Manager both available, full audit trail via CloudTrail
+- 9 reusable Terraform modules: `vpc`, `alb`, `bastion`, `frontend-asg`, `backend-asg`, `rds`, `iam`, `secrets`, `security_groups` - swap variables, redeploy any environment
+- Local docker-compose stack included - full 3-tier app runs offline for development without touching AWS
+
+👉 [View Project](./13_aws_3_tier_infra)
  
 ## 🧠 Core Concepts Across Projects
  
 | Concept | Projects |
 |---|---|
-| Modular Terraform | 7, 8, 9, 10 |
-| Networking & VPC Design | 2, 7, 9 |
-| IAM & Least Privilege | 3, 5, 7, 8, 10 |
-| Secrets & Credential Management | 7, 9 |
-| CI/CD Integration | 1, 3 |
+| Modular Terraform | 7, 8, 9, 10, 13 |
+| Networking & VPC Design | 2, 7, 9, 13 |
+| IAM & Least Privilege | 3, 5, 7, 8, 10, 13 |
+| Secrets & Credential Management | 7, 9, 13 |
+| CI/CD Integration | 1, 3, 12 |
 | Serverless & Event-Driven | 5, 10 |
-| Container Orchestration | 7 |
+| Container Orchestration | 7, 13 |
 | Zero-Downtime Deployments | 4 |
 | Compliance & Governance | 8 |
 | Database & Storage | 5, 9 |
@@ -218,7 +234,7 @@ protected by the same approval gate as production
  
 **Infrastructure:** Terraform · AWS
  
-**Application:** Python · Flask · Bash
+**Application:** Node.js · Go · Python · Bash
  
 **DevOps:** GitHub Actions · Docker · kubectl · ArgoCD · Prometheus · Grafana
  
