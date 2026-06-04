@@ -9,6 +9,9 @@ The project consists of:
 - **Backend**: Node.js API (port 8080)
 - **Database**: PostgreSQL (port 5432)
 
+![Architecture Diagram](images/14.1_Diagram.png)
+![Architecture Diagram](images/14.2_Diagram.png)
+
 ## Project Structure
 
 ```
