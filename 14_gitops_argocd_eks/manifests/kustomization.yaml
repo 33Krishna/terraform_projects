@@ -14,9 +14,9 @@ commonAnnotations:
   app.kubernetes.io/version: "1.0"
 
 images:
-  - name: itsbaivab/frontend
+  - name: 33Krishna/frontend
     newTag: v2
-  - name: itsbaivab/backend
+  - name: 33Krishna/backend
     newTag: latest
   - name: postgres
     newTag: "15"
