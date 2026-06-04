@@ -170,7 +170,7 @@ Built a production-grade, multi-AZ infrastructure that handles traffic spikes au
 
 ---
 
-1️⃣2️⃣ Production AWS Infrastructure - Terraform Multi-Environment CI/CD
+1️⃣2️⃣ **Production AWS Infrastructure - Terraform Multi-Environment CI/CD**
 Built a production-grade 2-tier AWS infrastructure with a complete CI/CD pipeline - 
 three isolated environments (dev, test, prod), automated security scanning, and a 
 manual approval gate before anything touches production. The kind of setup real 
@@ -197,7 +197,7 @@ protected by the same approval gate as production
 
 ---
 
-1️⃣3️⃣ **Goal Tracker - AWS 3-Tier Infrastructure**
+1️⃣3️⃣ **AWS 3-Tier Infrastructure**
 Built a production-grade, highly available 3-tier application on AWS - Node.js frontend,
 Go backend API, and PostgreSQL database - each tier isolated in its own private subnets
 across two AZs, provisioned entirely with modular Terraform and containerized with Docker.
@@ -212,9 +212,23 @@ across two AZs, provisioned entirely with modular Terraform and containerized wi
 - Local docker-compose stack included - full 3-tier app runs offline for development without touching AWS
 
 👉 [View Project](./13_aws_3_tier_infra)
+
+---
+
+1️⃣4️⃣ **GitOps with ArgoCD on AWS EKS using Kustomize**
+Solved the "cluster drift" problem - where nobody knows what's actually running vs what should be running. Git is the single source of truth, ArgoCD continuously watches it, and any deviation from desired state gets auto-corrected. Zero manual kubectl apply in the deployment loop.
+What makes it interesting:
+
+ArgoCD self-heal enabled - someone manually changes the cluster via kubectl, ArgoCD reverts it automatically - Git wins, always
+Kustomize centralizes control - update one image tag in kustomization.yaml, commit, push - all pods roll out without touching individual manifests
+EBS CSI Driver via IRSA - PostgreSQL gets persistent storage with pod-level IAM scoping, not node-level credentials
+Terraform provisions the entire platform - VPC, EKS, EBS CSI addon, and ArgoCD install in one terraform apply, then hands control to GitOps
+prune: true on sync policy - delete a resource from Git, it disappears from the cluster - no orphaned resources ever
+
+👉 [View Project](./14_gitops_argocd_eks)
  
 ## 🧠 Core Concepts Across Projects
- 
+
 | Concept | Projects |
 |---|---|
 | Modular Terraform | 7, 8, 9, 10, 13 |
@@ -223,7 +237,8 @@ across two AZs, provisioned entirely with modular Terraform and containerized wi
 | Secrets & Credential Management | 7, 9, 13 |
 | CI/CD Integration | 1, 3, 12 |
 | Serverless & Event-Driven | 5, 10 |
-| Container Orchestration | 7, 13 |
+| Container Orchestration | 7, 13, 14 |
+| GitOps & Continuous Reconciliation | 14 |
 | Zero-Downtime Deployments | 4 |
 | Compliance & Governance | 8 |
 | Database & Storage | 5, 9 |
