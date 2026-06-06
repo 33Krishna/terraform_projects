@@ -177,18 +177,17 @@ manual approval gate before anything touches production. The kind of setup real
 engineering teams actually use.
 
 **What makes it interesting:**
-
-Three fully isolated environments from one codebase - Terraform workspaces keep 
+- Three fully isolated environments from one codebase - Terraform workspaces keep 
 dev, test, and prod state completely separate, different VPC CIDRs, different 
 scaling configs, zero cross-contamination
-Every PR triggers automated security scanning - TFLint catches code quality issues, 
+- Every PR triggers automated security scanning - TFLint catches code quality issues, 
 Trivy scans for CRITICAL/HIGH misconfigurations before a single resource is created
-Production deployments require human approval - pipeline pauses, waits for a 
+- Production deployments require human approval - pipeline pauses, waits for a 
 reviewer to sign off, then applies the exact same plan artifact that was reviewed - 
 no surprises
-S3 native state locking - no DynamoDB table needed, concurrent applies are blocked 
+- S3 native state locking - no DynamoDB table needed, concurrent applies are blocked 
 at the backend level
-Multi-AZ high availability - 2 NAT Gateways, ALB distributing across AZs, ASG with 
+- Multi-AZ high availability - 2 NAT Gateways, ALB distributing across AZs, ASG with 
 target tracking + CloudWatch alarms for dynamic scaling
 Dedicated destroy workflow - manual trigger only, type "DESTROY" to confirm, 
 protected by the same approval gate as production
@@ -217,31 +216,51 @@ across two AZs, provisioned entirely with modular Terraform and containerized wi
 
 1️⃣4️⃣ **GitOps with ArgoCD on AWS EKS using Kustomize**
 Solved the "cluster drift" problem - where nobody knows what's actually running vs what should be running. Git is the single source of truth, ArgoCD continuously watches it, and any deviation from desired state gets auto-corrected. Zero manual kubectl apply in the deployment loop.
-What makes it interesting:
 
-ArgoCD self-heal enabled - someone manually changes the cluster via kubectl, ArgoCD reverts it automatically - Git wins, always
-Kustomize centralizes control - update one image tag in kustomization.yaml, commit, push - all pods roll out without touching individual manifests
-EBS CSI Driver via IRSA - PostgreSQL gets persistent storage with pod-level IAM scoping, not node-level credentials
-Terraform provisions the entire platform - VPC, EKS, EBS CSI addon, and ArgoCD install in one terraform apply, then hands control to GitOps
-prune: true on sync policy - delete a resource from Git, it disappears from the cluster - no orphaned resources ever
+**What makes it interesting:**
+- ArgoCD self-heal enabled - someone manually changes the cluster via kubectl, ArgoCD reverts it automatically - Git wins, always
+- Kustomize centralizes control - update one image tag in kustomization.yaml, commit, push - all pods roll out without touching individual manifests
+- EBS CSI Driver via IRSA - PostgreSQL gets persistent storage with pod-level IAM scoping, not node-level credentials
+- Terraform provisions the entire platform - VPC, EKS, EBS CSI addon, and ArgoCD install in one terraform apply, then hands control to GitOps
+- prune: true on sync policy - delete a resource from Git, it disappears from the cluster - no orphaned resources ever
 
 👉 [View Project](./14_gitops_argocd_eks)
+
+---
+
+### 1️⃣5️⃣ Terraform Drift Detection & Auto-Remediation
+ 
+Built an automated infrastructure watchdog - GitHub Actions runs every minute, compares actual AWS state against Terraform code, and auto-corrects any deviation before it becomes a security incident or compliance violation. The system that catches what nobody is watching.
+ 
+**What makes it interesting:**
+- Drift detected in under 60 seconds - scheduled cron runs every minute, `terraform plan -detailed-exitcode` catches any deviation the moment it happens
+- Auto-remediation without human touch - exit code 2 triggers `terraform apply` automatically, unauthorized changes get reverted before most teams even notice
+- Full audit trail via GitHub Issues - every drift event creates a timestamped issue with the exact plan diff, who fixed it, and when - permanently searchable
+- Security enforcement in real-time - someone opens SSH port 22 to 0.0.0.0/0 via Console, it's gone within 60 seconds and flagged in Slack
+- Multi-environment isolation - dev and prod each have separate state files in S3, drift detection scoped per environment, no cross-contamination
+- S3 native state locking - no DynamoDB needed, `.tflock` files prevent concurrent applies from corrupting state
+- Three dedicated workflows - CI/CD for deploy, Drift Detection for continuous monitoring, Destroy with "DESTROY" confirmation gate for safe teardown
+- Django app on Docker pulled from DockerHub, served via ALB → ASG across two private AZs - full production-grade underlying infra
+👉 [View Project](./15_drift_detection_auto_remediation)
+ 
+---
  
 ## 🧠 Core Concepts Across Projects
-
+ 
 | Concept | Projects |
 |---|---|
 | Modular Terraform | 7, 8, 9, 10, 13 |
-| Networking & VPC Design | 2, 7, 9, 13 |
-| IAM & Least Privilege | 3, 5, 7, 8, 10, 13 |
+| Networking & VPC Design | 2, 7, 9, 13, 15 |
+| IAM & Least Privilege | 3, 5, 7, 8, 10, 13, 15 |
 | Secrets & Credential Management | 7, 9, 13 |
-| CI/CD Integration | 1, 3, 12 |
+| CI/CD Integration | 1, 3, 12, 15 |
 | Serverless & Event-Driven | 5, 10 |
 | Container Orchestration | 7, 13, 14 |
 | GitOps & Continuous Reconciliation | 14 |
 | Zero-Downtime Deployments | 4 |
 | Compliance & Governance | 8 |
 | Database & Storage | 5, 9 |
+| Drift Detection & Auto-Remediation | 15 |
  
 ---
  
@@ -255,6 +274,7 @@ prune: true on sync policy - delete a resource from Git, it disappears from the 
  
 ---
  
+
 ## 📌 About This Portfolio
  
 These projects are built with production problems in mind - not just to make things work,
