@@ -1,4 +1,5 @@
 # Project 14 - Additional Interview Questions
+
 ## GitOps with ArgoCD on AWS EKS using Kustomize
 
 > Questions an experienced interviewer would ask beyond the obvious ones —
@@ -13,6 +14,7 @@
 This is called a **single-cluster ArgoCD setup**. The risk is a circular dependency — if the cluster goes down, ArgoCD goes down with it, and you lose the ability to recover the cluster using GitOps.
 
 The production pattern is a **hub-spoke model**:
+
 - One dedicated ArgoCD cluster (the hub) — lightweight, rarely touched
 - Multiple target clusters (the spokes) — where actual workloads run
 
@@ -25,11 +27,13 @@ In this project, single-cluster is acceptable because it is a dev environment an
 **Q: ArgoCD is watching a public GitHub repo. What are the security concerns and what would you do differently?**
 
 Concerns with a public repo:
+
 - Anyone can see your manifests — namespace names, image names, infrastructure layout
 - Secret values should never be in a public repo, but even non-secret config leaks architectural information
 - No access control on who can push — in theory anyone could open a PR
 
 What I would do in production:
+
 1. **Private repository** with deploy keys — ArgoCD uses a read-only SSH key to pull
 2. **Secrets never in Git** — use External Secrets Operator pulling from AWS Secrets Manager
 3. **Branch protection** on `main` — no direct pushes, PRs require review before ArgoCD picks up changes
@@ -42,6 +46,7 @@ What I would do in production:
 This is the shift-left problem in GitOps. The answer is a **pre-sync validation pipeline** in CI before anything merges to the branch ArgoCD watches.
 
 What that pipeline would do on every PR:
+
 1. **`kubectl apply --dry-run=server`** — catches invalid Kubernetes YAML
 2. **`kustomize build`** — verifies Kustomize renders without errors
 3. **Datree or Kubeconform** — validates against Kubernetes schema
@@ -59,6 +64,7 @@ The key insight: ArgoCD should only ever see config that has already passed vali
 This is a real cost and management problem. The solution is an **Ingress resource** with the **AWS Load Balancer Controller**.
 
 Instead of each Service creating its own LB:
+
 - One Application Load Balancer (ALB) is created
 - Ingress rules route traffic to different services based on path or hostname
 
@@ -99,6 +105,7 @@ The pod will be rescheduled on another node — but the EBS volume cannot follow
 This is a known limitation of EBS for database workloads.
 
 Solutions:
+
 1. **Node affinity** — pin Postgres to nodes in a specific AZ so the pod always reschedules to the same AZ where the EBS volume exists
 2. **EFS instead of EBS** — EFS is multi-AZ, any node in any AZ can mount it (but higher latency)
 3. **RDS** — take the database completely out of Kubernetes, let AWS manage HA, Multi-AZ failover, backups
@@ -122,11 +129,13 @@ The key point: the change is **not permanent**. If someone needs more replicas, 
 **Q: You used `storageClassName: gp2` for the Postgres PVC. What is wrong with this and what would you use?**
 
 `gp2` is the older AWS EBS volume type. The problems:
+
 - IOPS are tied to volume size (3 IOPS per GB) — to get more IOPS you have to provision a bigger disk, which costs more
 - Burst-based performance — can throttle under sustained load
 - More expensive per GB than gp3
 
 `gp3` is the correct choice:
+
 - IOPS and throughput are configurable **independently** of volume size
 - Baseline 3000 IOPS and 125 MB/s throughput at no extra cost
 - About 20% cheaper than gp2 for the same storage size
@@ -165,6 +174,7 @@ This is a real ordering problem. When `terraform destroy` runs:
 The namespace issue is also why the app namespace (`3tirewebapp-dev`) was commented out of Terraform — if Terraform owns the namespace and tries to delete it while ArgoCD-managed resources are still inside, it gets stuck on namespace finalizers forever.
 
 Clean destroy sequence:
+
 1. Delete the ArgoCD Application first and wait for app resources to be pruned
 2. Then destroy ArgoCD itself
 3. Then destroy EKS and VPC
@@ -178,6 +188,7 @@ In production, destroy workflows have explicit ordering scripts, not just `terra
 **Q: The application is deployed and running. How would you know if something is wrong? What observability is missing from this project?**
 
 What is missing:
+
 1. **No metrics collection** — no Prometheus scraping application metrics (request rate, error rate, latency)
 2. **No log aggregation** — logs exist in pods but are lost when pods restart. No CloudWatch Logs or ELK/Loki
 3. **No alerting** — no CloudWatch Alarms or PagerDuty integration
@@ -186,6 +197,7 @@ What is missing:
 6. **No resource monitoring** — no alerts if a node is at 90% memory
 
 What I would add for production:
+
 - **Prometheus + Grafana** (already shown in Project 7) for metrics and dashboards
 - **Fluent Bit → CloudWatch Logs** for log aggregation
 - **ArgoCD Notifications Controller** — Slack alert on sync failure
@@ -199,20 +211,24 @@ What I would add for production:
 Because Git is the source of truth, rollback is a Git operation — not a Kubernetes operation.
 
 Option 1 — **Git revert** (recommended):
+
 ```bash
 git revert <bad-commit-hash>
 git push origin main
 # ArgoCD detects the revert commit and syncs the old state back
 ```
+
 This is the correct GitOps approach — the rollback itself is a commit, so it is audited and visible.
 
 Option 2 — **ArgoCD UI rollback**:
+
 - ArgoCD keeps history of previous synced states
 - You can click "Rollback" in the UI to a previous Git SHA
 - This puts the app "OutOfSync" (cluster is at old state, Git is at new state)
 - Fine as a quick fix, but you must follow up with a Git revert to bring them back in sync
 
 Option 3 — **ArgoCD CLI**:
+
 ```bash
 argocd app rollback 3tier-app <history-id>
 ```
@@ -230,7 +246,8 @@ This is the **mutable tag problem** and it is a known GitOps anti-pattern.
 The rule: **never use mutable tags in GitOps**. `latest` should be banned.
 
 The correct pattern:
-- Every image build gets a unique immutable tag — git commit SHA or build number: `itsbaivab/frontend:a3f8c12`
+
+- Every image build gets a unique immutable tag — git commit SHA or build number: `33Krishna/frontend:a3f8c12`
 - CI pipeline builds image, tags it, pushes it
 - CI pipeline then opens a PR (or directly commits) to update the image tag in `kustomization.yaml`
 - PR gets reviewed and merged

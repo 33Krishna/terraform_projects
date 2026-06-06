@@ -1,4 +1,5 @@
 # Project 14 - Interview Q&A
+
 ## GitOps with ArgoCD on AWS EKS using Kustomize
 
 ---
@@ -11,12 +12,12 @@ Traditional deployment mein engineer manually `kubectl apply` ya `helm install` 
 
 GitOps mein Git repository = single source of truth. Jo bhi Git mein likha hai, wahi cluster mein hona chahiye. Ek controller (ArgoCD) continuously Git aur cluster compare karta rehta hai — difference milte hi auto-fix.
 
-| | Traditional | GitOps |
-|---|---|---|
-| Deployment trigger | Manual command | Git commit |
-| Audit trail | Log files (agar hain) | Git history |
-| Rollback | Manual, error-prone | `git revert` |
-| Drift detection | None | Automatic |
+|                    | Traditional           | GitOps       |
+| ------------------ | --------------------- | ------------ |
+| Deployment trigger | Manual command        | Git commit   |
+| Audit trail        | Log files (agar hain) | Git history  |
+| Rollback           | Manual, error-prone   | `git revert` |
+| Drift detection    | None                  | Automatic    |
 
 ---
 
@@ -46,6 +47,7 @@ ArgoCD yeh detect karta hai aur `selfHeal: true` hone pe automatically `replicas
 ArgoCD ek Kubernetes-native GitOps controller hai. Yeh cluster ke andar hi run karta hai aur continuously ek Git repo ko watch karta hai.
 
 Working:
+
 1. ArgoCD Application CRD define karo — "is repo ke is path ko is namespace mein deploy karo"
 2. ArgoCD har ~3 minutes pe Git repo poll karta hai (ya webhook se instant)
 3. Git ka desired state aur cluster ka actual state compare karta hai
@@ -61,22 +63,22 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: 3tier-app
-  namespace: argocd        # ArgoCD khud argocd namespace mein rehta hai
+  namespace: argocd # ArgoCD khud argocd namespace mein rehta hai
 spec:
-  project: default         # ArgoCD project — RBAC ke liye
+  project: default # ArgoCD project — RBAC ke liye
   source:
-    repoURL: https://github.com/...   # Kahan se manifests lo
-    targetRevision: main              # Kaunsi branch/tag
-    path: 3tire-configs               # Repo ke andar kaunsa folder
+    repoURL: https://github.com/... # Kahan se manifests lo
+    targetRevision: main # Kaunsi branch/tag
+    path: 3tire-configs # Repo ke andar kaunsa folder
   destination:
-    server: https://kubernetes.default.svc  # Same cluster
-    namespace: 3tirewebapp-dev              # Kahan deploy karo
+    server: https://kubernetes.default.svc # Same cluster
+    namespace: 3tirewebapp-dev # Kahan deploy karo
   syncPolicy:
     automated:
-      prune: true      # Git se resource delete → cluster se bhi delete
-      selfHeal: true   # Manual change → ArgoCD revert karega
+      prune: true # Git se resource delete → cluster se bhi delete
+      selfHeal: true # Manual change → ArgoCD revert karega
     syncOptions:
-      - CreateNamespace=true  # Namespace exist nahi → bana do
+      - CreateNamespace=true # Namespace exist nahi → bana do
 ```
 
 ---
@@ -148,13 +150,13 @@ resource "null_resource" "patch_argocd_service" {
 
 Dono Kubernetes manifest management tools hain, lekin approach alag hai:
 
-| | Kustomize | Helm |
-|---|---|---|
-| Approach | Patch existing YAMLs | Templating ({{ }} syntax) |
-| Learning curve | Low | Higher |
-| Built into kubectl | Yes (`kubectl apply -k`) | No (separate install) |
-| Use case | Overlay/patch existing manifests | Package + distribute apps |
-| Original files | Untouched | Template mein embedded |
+|                    | Kustomize                        | Helm                      |
+| ------------------ | -------------------------------- | ------------------------- |
+| Approach           | Patch existing YAMLs             | Templating ({{ }} syntax) |
+| Learning curve     | Low                              | Higher                    |
+| Built into kubectl | Yes (`kubectl apply -k`)         | No (separate install)     |
+| Use case           | Overlay/patch existing manifests | Package + distribute apps |
+| Original files     | Untouched                        | Template mein embedded    |
 
 Kustomize philosophy: "Original YAML ko touch mat karo, upar se patch lagao."
 
@@ -163,26 +165,26 @@ Kustomize philosophy: "Original YAML ko touch mat karo, upar se patch lagao."
 **Q: Is project mein Kustomize ne kya kiya? `kustomization.yaml` explain karo.**
 
 ```yaml
-namespace: 3tirewebapp-dev   # Sab resources is namespace mein jaayenge
+namespace: 3tirewebapp-dev # Sab resources is namespace mein jaayenge
 
-resources:                   # Kaunsi files include karni hain
+resources: # Kaunsi files include karni hain
   - namespace.yaml
   - secret.yaml
   - postgres.yaml
   - backend.yaml
   - frontend.yaml
 
-images:                      # Image tags centrally manage karo
-  - name: itsbaivab/frontend
-    newTag: v2               # frontend.yaml mein tag override ho jaata hai
+images: # Image tags centrally manage karo
+  - name: 33Krishna/frontend
+    newTag: v2 # frontend.yaml mein tag override ho jaata hai
   - name: postgres
     newTag: "15"
 
-replicas:                    # Replicas centrally manage karo
+replicas: # Replicas centrally manage karo
   - name: frontend
-    count: 2                 # frontend.yaml mein replicas: 1 tha → 2 ho gaya
+    count: 2 # frontend.yaml mein replicas: 1 tha → 2 ho gaya
 
-commonAnnotations:           # Sab resources pe yeh annotation lagega
+commonAnnotations: # Sab resources pe yeh annotation lagega
   app.kubernetes.io/version: "1.0"
 ```
 
@@ -206,12 +208,12 @@ Yeh dikhata hai ki actually kya apply hoga — debugging ke liye useful.
 
 **Q: Is project mein kaun kaun se Service types use hue aur kyun?**
 
-| Service | Type | Reason |
-|---|---|---|
-| `frontend` | LoadBalancer | Users bahar se access karte hain → AWS Classic LB create hota hai |
-| `backend` | ClusterIP | Sirf frontend pod access karta hai, bahar se nahi |
-| `postgres` | ClusterIP | Sirf backend pod access karta hai, bahar se bilkul nahi |
-| `argocd-server` | LoadBalancer (patched) | DevOps team UI access kare |
+| Service         | Type                   | Reason                                                            |
+| --------------- | ---------------------- | ----------------------------------------------------------------- |
+| `frontend`      | LoadBalancer           | Users bahar se access karte hain → AWS Classic LB create hota hai |
+| `backend`       | ClusterIP              | Sirf frontend pod access karta hai, bahar se nahi                 |
+| `postgres`      | ClusterIP              | Sirf backend pod access karta hai, bahar se bilkul nahi           |
+| `argocd-server` | LoadBalancer (patched) | DevOps team UI access kare                                        |
 
 **Security principle:** Minimum exposure. Jo bahar se access nahi hona chahiye, usse ClusterIP rakho.
 
@@ -231,7 +233,7 @@ env:
         name: backend-config
         key: DB_HOST
 
-# Secret se
+  # Secret se
   - name: DB_PASSWORD
     valueFrom:
       secretKeyRef:
@@ -243,12 +245,12 @@ env:
 
 **Q: Liveness Probe aur Readiness Probe mein kya fark hai?**
 
-| | Liveness Probe | Readiness Probe |
-|---|---|---|
-| Question | "Container zinda hai?" | "Container traffic le sakta hai?" |
-| Fail hone pe | Container restart | Service se temporarily remove |
-| Use case | Deadlock/hang detect karna | Startup complete hone tak wait |
-| `initialDelaySeconds` | 30s (startup time do) | 5s (jaldi check karo) |
+|                       | Liveness Probe             | Readiness Probe                   |
+| --------------------- | -------------------------- | --------------------------------- |
+| Question              | "Container zinda hai?"     | "Container traffic le sakta hai?" |
+| Fail hone pe          | Container restart          | Service se temporarily remove     |
+| Use case              | Deadlock/hang detect karna | Startup complete hone tak wait    |
+| `initialDelaySeconds` | 30s (startup time do)      | 5s (jaldi check karo)             |
 
 Backend mein dono `/health` endpoint hit karte hain. Agar app hang ho jaye — liveness restart karega. Agar app start ho rahi ho — readiness traffic rokegi jab tak ready nahi.
 
@@ -289,7 +291,7 @@ Pod delete ho → PVC remains → data safe. Pod wapas aaya → same PVC mount �
 volumeMounts:
   - name: postgres-storage
     mountPath: /var/lib/postgresql/data
-    subPath: postgres   # ← yeh kyun?
+    subPath: postgres # ← yeh kyun?
 ```
 
 PostgreSQL `PGDATA` directory ke andar direct mount se issue aata hai — postgres initialization fail hoti hai agar root directory pehle se exist kare. `subPath` ek subdirectory (`postgres/`) create karta hai andar — clean initialization hoti hai.
@@ -300,13 +302,13 @@ PostgreSQL `PGDATA` directory ke andar direct mount se issue aata hai — postgr
 
 **Q: Is project mein itne saare providers kyun use kiye?**
 
-| Provider | Kyun |
-|---|---|
-| `aws` | VPC, EKS, IAM, EBS banane ke liye |
-| `kubernetes` | K8s namespace resource banane ke liye |
-| `kubectl` | Raw YAML apply karne ke liye (ArgoCD install) |
-| `http` | ArgoCD install.yaml URL se download karne ke liye |
-| `null` | Shell command run karne ke liye (kubectl patch) |
+| Provider     | Kyun                                              |
+| ------------ | ------------------------------------------------- |
+| `aws`        | VPC, EKS, IAM, EBS banane ke liye                 |
+| `kubernetes` | K8s namespace resource banane ke liye             |
+| `kubectl`    | Raw YAML apply karne ke liye (ArgoCD install)     |
+| `http`       | ArgoCD install.yaml URL se download karne ke liye |
+| `null`       | Shell command run karne ke liye (kubectl patch)   |
 
 `kubernetes` provider structured resources ke liye better hai. `kubectl` provider raw YAML ke liye — ArgoCD ka install.yaml 300+ resources ka ek bada file hai jo `kubernetes` provider se handle nahi hota.
 
@@ -332,6 +334,7 @@ IRSA = IAM Roles for Service Accounts
 Problem: EBS CSI Driver pod ko AWS API call karni hoti hai (EBS volumes create/attach/delete). Pehle yeh node ka IAM role use hota tha — matlab sab pods ko wahi permissions milti thi.
 
 IRSA solution:
+
 ```
 K8s Service Account → OIDC Token → AWS STS → IAM Role assume
 ```
@@ -406,12 +409,12 @@ ArgoCD `selfHeal: true` hai. ArgoCD next reconciliation cycle pe (seconds mein) 
 
 ```bash
 # 1. New image build aur push
-docker build -t itsbaivab/frontend:v3 .
-docker push itsbaivab/frontend:v3
+docker build -t 33Krishna/frontend:v3 .
+docker push 33Krishna/frontend:v3
 
 # 2. kustomization.yaml update karo
 # images:
-#   - name: itsbaivab/frontend
+#   - name: 33Krishna/frontend
 #     newTag: v3   ← change karo
 
 # 3. Commit aur push

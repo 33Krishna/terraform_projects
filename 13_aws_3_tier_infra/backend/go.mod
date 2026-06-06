@@ -1,4 +1,4 @@
-module github.com/itsBaivab/Terraform-Full-Course-Azure
+module github.com/33Krishna/Terraform-Full-Course-Azure
 
 go 1.23.0
 

@@ -31,7 +31,7 @@ Internet → ALB (Public) → EC2 Instances (Private) → NAT Gateways → Inter
 - **NAT Gateways**: 2 (one per AZ for HA)
 - **ALB**: Internet-facing, spans both public subnets
 - **ASG**: Min:1, Desired:2, Max:5 instances
-- **Container**: `itsbaivab/django-app` (Port 8000→80)
+- **Container**: `33Krishna/django-app` (Port 8000→80)
 
 ## 📁 Code Structure
 
@@ -84,6 +84,7 @@ terraform destroy -auto-approve
 ## 💰 Cost Estimate
 
 ~$103-108/month (us-east-1):
+
 - EC2 t2.micro (2 avg): ~$17
 - ALB: $16.20
 - NAT Gateway (2): $64.80
